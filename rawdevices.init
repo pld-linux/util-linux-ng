@@ -1,14 +1,14 @@
 #!/bin/bash
 #
-# rawdevices       This shell script assignes rawdevices to block devices
+# rawdevices	This shell script assignes rawdevices to block devices
 #
-# chkconfig: 345 56 44
-# description: This scripts assignes raw devices to block devices \
-#              (such as hard drive partitions). This is for the use \
-#	       of applications such as Oracle. You can set up the \
-#	       raw device to block device mapping by editing \
-#	       the file /etc/sysconfig/rawdevices.
-# config: /etc/sysconfig/rawdevices
+# chkconfig:	345 56 44
+# description:	This scripts assignes raw devices to block devices \
+#		(such as hard drive partitions). This is for the use \
+#		of applications such as Oracle. You can set up the \
+#		raw device to block device mapping by editing \
+#		the file /etc/sysconfig/rawdevices.
+# config:	/etc/sysconfig/rawdevices
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -25,74 +25,73 @@ PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
 function assign_raw()
 {
-   cat /etc/sysconfig/rawdevices | egrep -v '^ *#' | while read RAW BLOCK; do 
-     if [ -n "$RAW" -a -n "$BLOCK" ]; then 
-         if [ "`dirname $RAW`" = "/dev" -a -d /dev/raw ]; then
-           echo $"  Please correct your /etc/sysconfig/rawdevices:"
-           echo $"     rawdevices are now located in the directory /dev/raw/ "
-           echo $"  If the command 'raw' still refers to /dev/raw as a file."
-           echo $"   you'll have to upgrade your util-linux package"
-           exit 0
-         fi
-         if [ "`dirname $RAW`" = "/dev/raw" -a -f /dev/raw ]; then
-           echo $"  Please correct your /etc/sysconfig/rawdevices:"
-           echo $"     rawdevices are now located in the directory /dev/raw/ "
-           echo $"  If the command 'raw' still refers to /dev/raw as a file."
-           echo $"   you'll have to upgrade your util-linux package"
-           exit 0
-         fi
+	cat /etc/sysconfig/rawdevices | egrep -v '^ *#' | while read RAW BLOCK; do 
+	if [ -n "$RAW" -a -n "$BLOCK" ]; then 
+		if [ "`dirname $RAW`" = "/dev" -a -d /dev/raw ]; then
+			nls " Please correct your /etc/sysconfig/rawdevices:"
+			nls " rawdevices are now located in the directory /dev/raw/ "
+			nls " If the command 'raw' still refers to /dev/raw as a file."
+			nls " You'll have to upgrade your util-linux package"
+			exit 0
+		fi
+		if [ "`dirname $RAW`" = "/dev/raw" -a -f /dev/raw ]; then
+			nls " Please correct your /etc/sysconfig/rawdevices:"
+			nls " rawdevices are now located in the directory /dev/raw/ "
+			nls " If the command 'raw' still refers to /dev/raw as a file."
+			nls " You'll have to upgrade your util-linux package"
+			exit 0
+		fi
 
-       show "Assigning device: $RAW --> $BLOCK"
-       busy
-       raw $RAW $BLOCK > /dev/null
-       deltext
-       ok
-     fi
-   done
+		show $(nls "Assigning device: %s --> %s" "$RAW" "$BLOCK")
+		busy
+		raw $RAW $BLOCK > /dev/null
+		ok
+	fi
+	done
 }
+
 
 # See how we were called.
 case "$1" in
   start)
-  	if [ ! -f /var/lock/subsys/rawdevices ]; then
+	if [ ! -f /var/lock/subsys/rawdevices ]; then
 		msg_starting rawdevices
 		ok
 		assign_raw
 		touch /var/lock/subsys/rawdevices
 	else
 		msg_already_running rawdevices
+		exit 1
 	fi
-        ;;
+	;;
   stop)
-  	if [ -f /var/lock/subsys/rawdevices ]; then
+	if [ -f /var/lock/subsys/rawdevices ]; then
 		msg_stopping rawdevices
 		busy
 		rm -f /var/lock/subsys/rawdevices >/dev/null 2>&1
-		deltext
 		ok
 	else
 		msg_not_running rawdevices
 		exit 1
 	fi
-        ;;
-
+	;;
   status)
-        ID=`id -u`
-        if [ $ID -eq 0 ]; then 
-          raw -qa
-        else
-          echo $"You need to be root to use this command ! "
-        fi
-        ;;
-
+	ID=`id -u`
+	if [ $ID -eq 0 ]; then 
+		raw -qa
+	else
+		# don't remove the space at the end!!!
+		nls "You need to be root to use this command ! "
+	fi
+	;;
   restart|reload)
-  	$0 stop
-        $0 start
-        ;;
+	$0 stop
+	$0 start
+	;;
 
   *)
-        msg_usage "$0 {start|stop|status|restart}"
-        exit 1
+	msg_usage "$0 {start|stop|restart|reload|status}"
+	exit 1
 esac
 
 exit 0
