@@ -17,4 +17,5 @@ password	required	pam_make.so /var/db
 session		required	pam_unix.so
 session		required	pam_env.so
 session		required	pam_limits.so change_uid
+#session    	required	pam_selinux.so
 session		optional	pam_console.so
