@@ -53,7 +53,7 @@ function assign_raw()
 
 # See how we were called.
 case "$1" in
-  start)
+  start|reload)
 	if [ ! -f /var/lock/subsys/rawdevices ]; then
 		msg_starting rawdevices
 		ok
@@ -61,7 +61,6 @@ case "$1" in
 		touch /var/lock/subsys/rawdevices
 	else
 		msg_already_running rawdevices
-		exit 1
 	fi
 	;;
   stop)
@@ -72,7 +71,6 @@ case "$1" in
 		ok
 	else
 		msg_not_running rawdevices
-		exit 1
 	fi
 	;;
   status)
@@ -84,14 +82,14 @@ case "$1" in
 		nls "You need to be root to use this command ! "
 	fi
 	;;
-  restart|reload)
+  restart|force-reload)
 	$0 stop
 	$0 start
 	;;
 
   *)
-	msg_usage "$0 {start|stop|restart|reload|status}"
-	exit 1
+	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
+	exit 3
 esac
 
 exit 0
