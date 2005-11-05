@@ -1,0 +1,8 @@
+# This file lets you set your block device parameters for better performance
+# See blockdev (8) for details.
+
+BLOCKDEV_hda=
+#BLOCKDEV_hdb="--setra 4096"
+BLOCKDEV_hdb=
+BLOCKDEV_hdc=
+BLOCKDEV_hdd=

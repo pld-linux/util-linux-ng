@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# blockdev		This shell script takes care of starting and stopping blockdev.
+#
+# chkconfig:	2345 01 99
+# description:	blockdev
+#		
+# processname:	blockdev
+# config:	
+# pidfile:
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source blockdev configureation.
+[ -f /etc/sysconfig/blockdev ] && . /etc/sysconfig/blockdev
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+	start)
+	# Start daemons.
+	if [ ! -f /var/lock/subsys/blockdev ]; then
+
+		for drive in $(ls /sys/block 2> /dev/null); do
+			if [ -d "/sys/block/${drive}" ]; then
+				eval PARAMS=\$BLOCKDEV_${drive}
+				if [ -n "${PARAMS}" ]; then
+					show "Setting parameters for block drive %s (%s)" "$drive" "$PARAMS"
+					busy
+					/sbin/blockdev ${PARAMS} /dev/${drive}
+					ok
+				fi
+			fi
+		done
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/blockdev
+	else
+		msg_already_running blockdev
+	fi
+	;;
+	stop)
+	# Stop daemons.
+	if [ ! -f /var/lock/subsys/blockdev ]; then
+		msg_not_running blockdev
+	fi	
+	;;
+	restart|force-reload)
+	$0 stop
+	$0 start
+	exit $?
+	;;
+	status)
+	status blockdev
+	exit $?
+	;;
+	#  reload)
+	#	msg_reloading blockdev
+	#	killproc blockdev -HUP
+	#	;;
+	*)
+	msg_usage "$0 {start|stop|restart|force-reload|status}"
+	exit 3
+esac
+
+exit $RETVAL
