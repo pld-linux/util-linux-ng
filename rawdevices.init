@@ -42,7 +42,7 @@ function assign_raw()
 			exit 0
 		fi
 
-		show $(nls "Assigning device: %s --> %s" "$RAW" "$BLOCK")
+		show "$(nls "Assigning device: %s --> %s" "$RAW" "$BLOCK")"
 		busy
 		raw $RAW $BLOCK > /dev/null
 		ok
