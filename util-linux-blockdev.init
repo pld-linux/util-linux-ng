@@ -44,6 +44,7 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/blockdev ]; then
 		msg_not_running blockdev
 	fi	
+	rm -f /var/lock/subsys/blockdev
 	;;
 	restart|force-reload)
 	$0 stop
