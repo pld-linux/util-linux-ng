@@ -4,9 +4,9 @@
 #
 # chkconfig:	2345 01 99
 # description:	blockdev
-#		
+#
 # processname:	blockdev
-# config:	
+# config:
 # pidfile:
 
 # Source function library.
@@ -43,7 +43,7 @@ case "$1" in
 	# Stop daemons.
 	if [ ! -f /var/lock/subsys/blockdev ]; then
 		msg_not_running blockdev
-	fi	
+	fi
 	rm -f /var/lock/subsys/blockdev
 	;;
 	restart|force-reload)

@@ -25,8 +25,8 @@ PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
 function assign_raw()
 {
-	cat /etc/sysconfig/rawdevices | egrep -v '^ *#' | while read RAW BLOCK; do 
-	if [ -n "$RAW" -a -n "$BLOCK" ]; then 
+	cat /etc/sysconfig/rawdevices | egrep -v '^ *#' | while read RAW BLOCK; do
+	if [ -n "$RAW" -a -n "$BLOCK" ]; then
 		if [ "`dirname $RAW`" = "/dev" -a -d /dev/raw ]; then
 			nls " Please correct your /etc/sysconfig/rawdevices:"
 			nls " rawdevices are now located in the directory /dev/raw/ "
@@ -75,7 +75,7 @@ case "$1" in
 	;;
   status)
 	ID=`id -u`
-	if [ $ID -eq 0 ]; then 
+	if [ $ID -eq 0 ]; then
 		raw -qa
 	else
 		# don't remove the space at the end!!!
