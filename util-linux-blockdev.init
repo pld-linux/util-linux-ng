@@ -15,13 +15,8 @@
 # Source blockdev configureation.
 [ -f /etc/sysconfig/blockdev ] && . /etc/sysconfig/blockdev
 
-RETVAL=0
-# See how we were called.
-case "$1" in
-	start)
-	# Start daemons.
+start() {
 	if [ ! -f /var/lock/subsys/blockdev ]; then
-
 		for drive in $(ls /sys/block 2> /dev/null); do
 			if [ -d "/sys/block/${drive}" -a -e "/dev/${drive}" ]; then
 				eval PARAMS=\$BLOCKDEV_${drive}
@@ -38,28 +33,34 @@ case "$1" in
 	else
 		msg_already_running blockdev
 	fi
-	;;
-	stop)
+}
+
+stop() {
 	# Stop daemons.
 	if [ ! -f /var/lock/subsys/blockdev ]; then
 		msg_not_running blockdev
 	fi
 	rm -f /var/lock/subsys/blockdev
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
 	;;
-	restart|force-reload)
-	$0 stop
-	$0 start
-	exit $?
+  stop)
+	stop
 	;;
-	status)
+  restart|force-reload)
+	stop
+	start
+	;;
+  status)
 	status blockdev
 	exit $?
 	;;
-	#  reload)
-	#	msg_reloading blockdev
-	#	killproc blockdev -HUP
-	#	;;
-	*)
+  *)
 	msg_usage "$0 {start|stop|restart|force-reload|status}"
 	exit 3
 esac

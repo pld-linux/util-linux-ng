@@ -50,10 +50,7 @@ function assign_raw()
 	done
 }
 
-
-# See how we were called.
-case "$1" in
-  start|reload)
+start() {
 	if [ ! -f /var/lock/subsys/rawdevices ]; then
 		msg_starting rawdevices
 		ok
@@ -62,8 +59,9 @@ case "$1" in
 	else
 		msg_already_running rawdevices
 	fi
-	;;
-  stop)
+}
+
+stop() {
 	if [ -f /var/lock/subsys/rawdevices ]; then
 		msg_stopping rawdevices
 		busy
@@ -72,10 +70,19 @@ case "$1" in
 	else
 		msg_not_running rawdevices
 	fi
+}
+
+# See how we were called.
+case "$1" in
+  start|reload)
+  	start
+	;;
+  stop)
+  	stop
 	;;
   status)
-	ID=`id -u`
-	if [ $ID -eq 0 ]; then
+	id=`id -u`
+	if [ "$id" -eq 0 ]; then
 		raw -qa
 	else
 		# don't remove the space at the end!!!
@@ -83,8 +90,8 @@ case "$1" in
 	fi
 	;;
   restart|force-reload)
-	$0 stop
-	$0 start
+	stop
+	start
 	;;
 
   *)
