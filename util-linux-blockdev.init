@@ -19,7 +19,7 @@ start() {
 	if [ ! -f /var/lock/subsys/blockdev ]; then
 		for drive in $(ls /sys/block 2> /dev/null); do
 			if [ -d "/sys/block/${drive}" -a -e "/dev/${drive}" ]; then
-				eval PARAMS=\$BLOCKDEV_${drive}
+				eval PARAMS=\$BLOCKDEV_$(echo $drive | tr - _)
 				if [ -n "${PARAMS}" ]; then
 					show "Setting parameters for block drive %s (%s)" "$drive" "$PARAMS"
 					busy

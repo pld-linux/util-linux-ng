@@ -1,4 +1,5 @@
-# This file lets you set your block device parameters for better performance
+# This file lets you set your block device parameters for better performance.
+# If device name contains dash (-), then it's translated to underscore (_) here.
 # See blockdev (8) for details.
 
 BLOCKDEV_hda=
