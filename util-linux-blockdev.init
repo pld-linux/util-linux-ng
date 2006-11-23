@@ -18,12 +18,17 @@
 start() {
 	if [ ! -f /var/lock/subsys/blockdev ]; then
 		for drive in $(ls /sys/block 2> /dev/null; ls /dev/mapper 2> /dev/null); do
-			if [ -e "/dev/${drive}" ]; then
+			if [ [ -d "/sys/block/${drive}" -a -e "/dev/${drive}" ]; then
+				realdrive="/dev/${drive}"
+			elif [ -e "/dev/mapper/${drive}" ]; then
+				realdrive="/dev/mapper/${drive}"
+			fi
+			if [ -n "$realdrive" ]; then
 				eval PARAMS=\$BLOCKDEV_$(echo $drive | tr - _)
 				if [ -n "${PARAMS}" ]; then
 					show "Setting parameters for block drive %s (%s)" "$drive" "$PARAMS"
 					busy
-					/sbin/blockdev ${PARAMS} /dev/${drive}
+					/sbin/blockdev ${PARAMS} ${realdrive}
 					ok
 				fi
 			fi
