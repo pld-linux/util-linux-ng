@@ -9,15 +9,27 @@
 # config:
 # pidfile:
 
+if [ -f /etc/sysconfig/blockdev ]; then
+	blockdevs=$(awk -F= '!/^#/ && !/^$/ {if ($2) print $1}' /etc/sysconfig/blockdev)
+fi
+
+if [ -z "$blockdevs" ]; then
+   	case "$1" in
+	start|stop|restart|force-reload)
+		exit 0
+		;;
+	esac
+fi
+
 # Source function library.
 . /etc/rc.d/init.d/functions
 
 # Source blockdev configureation.
-[ -f /etc/sysconfig/blockdev ] && . /etc/sysconfig/blockdev
+. /etc/sysconfig/blockdev
 
 start() {
 	if [ ! -f /var/lock/subsys/blockdev ]; then
-		for var in $(awk -F= '!/^#/ && !/^$/ {if ($2) print $1}' /etc/sysconfig/blockdev); do
+		for var in $blockdevs; do
 			realdrive=
 			drive=${var#BLOCKDEV_}
 			if [ -d "/sys/block/${drive}" -a -e "/dev/${drive}" ]; then
