@@ -9,10 +9,9 @@
 # config:
 # pidfile:
 
-if [ -f /etc/sysconfig/blockdev ]; then
-	blockdevs=$(awk -F= '!/^#/ && !/^$/ {if ($2) print $1}' /etc/sysconfig/blockdev)
-fi
+[ -f /etc/sysconfig/blockdev ] || exit 0
 
+blockdevs=$(awk -F= '!/^#/ && !/^$/ {if ($2) print $1}' /etc/sysconfig/blockdev)
 if [ -z "$blockdevs" ]; then
    	case "$1" in
 	start|stop|restart|force-reload)
