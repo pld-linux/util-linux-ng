@@ -86,6 +86,7 @@ case "$1" in
 			drive=${var#BLOCKDEV_}
 			echo -n "- $drive: "
 
+			realdrive=
 			if [ -d "/sys/block/${drive}" -a -e "/dev/${drive}" ]; then
 				realdrive="/dev/${drive}"
 			elif [ -e "/dev/mapper/${drive}" ]; then
