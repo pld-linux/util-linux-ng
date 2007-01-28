@@ -23,7 +23,7 @@ fi
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-# Source blockdev configureation.
+# Source blockdev configuration.
 . /etc/sysconfig/blockdev
 
 start() {
