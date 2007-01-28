@@ -80,8 +80,33 @@ case "$1" in
 	start
 	;;
   status)
-	status blockdev
-	exit $?
+  	if [ "$blockdevs" ]; then
+		echo "blockdev configured for:"
+		for var in $blockdevs; do
+			drive=${var#BLOCKDEV_}
+			echo -n "- $drive: "
+
+			if [ -d "/sys/block/${drive}" -a -e "/dev/${drive}" ]; then
+				realdrive="/dev/${drive}"
+			elif [ -e "/dev/mapper/${drive}" ]; then
+				realdrive="/dev/mapper/${drive}"
+			elif drive=$(echo $drive | tr _ -) && [ -d "/sys/block/${drive}" -a -e "/dev/${drive}" ]; then
+				realdrive="/dev/${drive}"
+			elif [ -e "/dev/mapper/${drive}" ]; then
+				realdrive="/dev/mapper/${drive}"
+			fi
+
+			eval PARAMS=\$$var
+			if [ -n "$realdrive" ]; then
+				echo "${PARAMS}; device=$realdrive"
+			else
+				echo "${PARAMS}; device not present"
+			fi
+
+		done
+	else
+		echo "no devices configured for blockdev"
+	fi
 	;;
   *)
 	msg_usage "$0 {start|stop|restart|force-reload|status}"
