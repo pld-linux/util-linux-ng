@@ -15,7 +15,7 @@
 
 TEXTDOMAIN=initscripts
 
-[ -f /bin/raw ] || exit 0
+[ -f /sbin/raw ] || exit 0
 [ -f /etc/sysconfig/rawdevices ] || exit 0
 
 # If the file just has the default comments, exit.
