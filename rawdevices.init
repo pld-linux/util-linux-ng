@@ -10,18 +10,13 @@
 #		the file /etc/sysconfig/rawdevices.
 # config:	/etc/sysconfig/rawdevices
 
-# Source function library.
-. /etc/rc.d/init.d/functions
-
-TEXTDOMAIN=initscripts
-
-[ -f /sbin/raw ] || exit 0
 [ -f /etc/sysconfig/rawdevices ] || exit 0
 
 # If the file just has the default comments, exit.
 grep -q -v "^#" /etc/sysconfig/rawdevices 2>/dev/null || exit 0
 
-PATH=/usr/bin:/bin:/usr/sbin:/sbin
+# Source function library.
+. /etc/rc.d/init.d/functions
 
 function assign_raw()
 {
@@ -81,13 +76,7 @@ case "$1" in
   	stop
 	;;
   status)
-	id=`id -u`
-	if [ "$id" -eq 0 ]; then
-		raw -qa
-	else
-		# don't remove the space at the end!!!
-		nls "You need to be root to use this command ! "
-	fi
+	raw -qa
 	;;
   restart|force-reload)
 	stop
