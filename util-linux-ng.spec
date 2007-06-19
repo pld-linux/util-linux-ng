@@ -47,6 +47,7 @@ Provides:	util-linux = %{version}-%{release}
 Obsoletes:	cramfs
 Obsoletes:	rawdevices
 Obsoletes:	schedutils
+Obsoletes:	util-linux
 Obsoletes:	util-linux-suids
 Conflicts:	shadow-extras < 1:4.0.3-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
