@@ -3,6 +3,7 @@
 %bcond_with	uClibc	# don't build few utilities
 %bcond_without	selinux # build without SELinux support
 #
+%define	snap	20070619
 Summary:	Collection of basic system utilities for Linux
 Summary(de.UTF-8):	Sammlung von grundlegenden Systemdienstprogrammen für Linux
 Summary(es.UTF-8):	Colectánea de utilitarios básicos de sistema para Linux
@@ -12,22 +13,20 @@ Summary(pt_BR.UTF-8):	Coletânea de utilitários básicos de sistema para Linux
 Summary(ru.UTF-8):	Набор базовых системных утилит для Linux
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
-%define	snap	20070619
 Name:		util-linux-ng
 Version:	2.13
 Release:	0.%{snap}.1
 License:	GPL
 Group:		Applications/System
-Source0:	util-linux-ng-20070619.tar.gz
+Source0:	%{name}-20070619.tar.gz
 # Source0-md5:	0f9736ce415407c532bd37ef615f51b9
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
 Source2:	login.pamd
-Source3:	rawdevices.init
-Source4:	rawdevices.sysconfig
-Source5:	util-linux-blockdev.init
-Source6:	util-linux-blockdev.sysconfig
+Source3:	util-linux-blockdev.init
+Source4:	util-linux-blockdev.sysconfig
+Patch0:		%{name}-tinfo.patch
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -44,7 +43,9 @@ BuildRequires:	texinfo
 %{!?with_uClibc:BuildRequires:	zlib-devel}
 %{!?with_uClibc:Requires:	pam >= 0.99.7.1}
 Provides:	fdisk
+Provides:	util-linux = %{version}-%{release}
 Obsoletes:	cramfs
+Obsoletes:	rawdevices
 Obsoletes:	schedutils
 Obsoletes:	util-linux-suids
 Conflicts:	shadow-extras < 1:4.0.3-6
@@ -263,6 +264,7 @@ sisteminizin işlevselliği açısından kritiktir.
 Summary:	chkdupexe - find duplicate executables
 Summary(pl.UTF-8):	chkdupexe odszukuje powtarzające się pliki uruchamialne
 Group:		Applications/System
+Provides:	util-linux-chkdupexe = %{version}-%{release}
 
 %description chkdupexe
 chkdupexe will scan the union of $PATH and a hardcoded list of common
@@ -327,21 +329,9 @@ agetty is simple Linux getty with serial support.
 %description -n agetty -l pl.UTF-8
 agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 
-%package -n rawdevices
-Summary:	Support for raw-devices
-Summary(pl.UTF-8):	Obsługa raw-device'ów
-Group:		Applications/System
-Requires(post,preun):	/sbin/chkconfig
-Requires:	rc-scripts
-
-%description -n rawdevices
-Support for raw-devices.
-
-%description -n rawdevices -l pl.UTF-8
-Obsługa raw-device'ów.
-
 %prep
 %setup -q -a1 -n %{name}
+%patch0 -p1
 sed -i -e 's#po/Makefile.in##g' configure.ac
 
 %build
@@ -363,7 +353,6 @@ CPPFLAGS="-I/usr/include/ncurses"; export CPPFLAGS
 	--enable-login-chown-vcs \
 	--enable-login-utils \
 	--enable-partx \
-	%{!?with_uClibc:--enable-raw} \
 	--enable-rdev \
 	--enable-write \
 	--with-audit \
@@ -391,13 +380,10 @@ install misc-utils/scriptreplay.1 $RPM_BUILD_ROOT%{_mandir}/man1/
 sed -i -e 's,/usr/spool/mail,/var/mail,g' $RPM_BUILD_ROOT%{_mandir}/man1/login.1
 
 mv $RPM_BUILD_ROOT%{_sbindir}/{addpart,delpart,partx} $RPM_BUILD_ROOT/sbin
-mv $RPM_BUILD_ROOT%{_bindir}/raw $RPM_BUILD_ROOT/sbin
 
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/login
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/rawdevices
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/rawdevices
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/blockdev
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/blockdev
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 
 :> $RPM_BUILD_ROOT/etc/security/blacklist.login
 :> $RPM_BUILD_ROOT/var/lock/wtmpxlock
@@ -460,16 +446,6 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del blockdev
 fi
 
-%post -n rawdevices
-/sbin/chkconfig --add rawdevices
-%service rawdevices restart
-
-%preun -n rawdevices
-if [ "$1" = "0" ]; then
-	%service rawdevices stop
-	/sbin/chkconfig --del rawdevices
-fi
-
 %files %{!?with_uClibc:-f %{name}.lang}
 %defattr(644,root,root,755)
 %doc */README.* text-utils/LICENSE.pg NEWS
@@ -524,7 +500,7 @@ fi
 %attr(755,root,root) %{_bindir}/renice
 %attr(755,root,root) %{_bindir}/rev
 %attr(755,root,root) %{_bindir}/script
-%attr(755,root,root) %{_bindir}/scriptreply
+%attr(755,root,root) %{_bindir}/scriptreplay
 %attr(755,root,root) %{_bindir}/setsid
 %{!?with_uClibc:%attr(755,root,root) %{_bindir}/setterm}
 %attr(755,root,root) %{_bindir}/tailf
@@ -541,10 +517,13 @@ fi
 %{_mandir}/man1/colrm.1*
 %{_mandir}/man1/column.1*
 %{_mandir}/man1/ddate.1*
+%{_mandir}/man1/dmesg.1*
 %{_mandir}/man1/flock.1*
 %{_mandir}/man1/getopt.1*
 %{_mandir}/man1/hexdump.1*
 %{_mandir}/man1/ionice.1*
+%{_mandir}/man1/ipcrm.1*
+%{_mandir}/man1/ipcs.1*
 %{_mandir}/man1/kill.1*
 %{_mandir}/man1/line.1*
 %{_mandir}/man1/logger.1*
@@ -554,10 +533,12 @@ fi
 %{_mandir}/man1/namei.1*
 %{!?with_uClibc:%{_mandir}/man1/pg.1*}
 %{_mandir}/man1/readprofile.1*
+%{_mandir}/man1/renice.1*
 %{_mandir}/man1/rev.1*
 %{_mandir}/man1/rename.1*
+%{_mandir}/man1/setsid.1*
 %{_mandir}/man1/script.1*
-%{_mandir}/man1/scriptreply.1*
+%{_mandir}/man1/scriptreplay.1*
 %{!?with_uClibc:%{_mandir}/man1/setterm.1*}
 %{_mandir}/man1/tailf.1*
 %{_mandir}/man1/taskset.1*
@@ -569,15 +550,10 @@ fi
 %{_mandir}/man8/ctrlaltdel.8*
 %{_mandir}/man8/cytune.8*
 %{_mandir}/man8/delpart.8*
-%{_mandir}/man8/dmesg.8*
 %{_mandir}/man8/fdformat.8*
-%{_mandir}/man8/ipcrm.8*
-%{_mandir}/man8/ipcs.8*
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/partx.8*
-%{_mandir}/man8/renice.8*
-%{_mandir}/man8/setsid.8*
 
 %lang(cs) %{_mandir}/cs/man1/write.1*
 
@@ -762,9 +738,6 @@ fi
 %lang(pl) %{_mandir}/pl/man8/ipcs.8*
 %lang(pl) %{_mandir}/pl/man8/mkswap.8*
 %lang(pl) %{_mandir}/pl/man8/renice.8*
-
-%dir %{_examplesdir}/getopt
-%attr(755,root,root) %{_examplesdir}/getopt/*
 
 %attr(755,root,root) /sbin/fdisk
 %attr(755,root,root) /sbin/fsck.minix
@@ -1000,14 +973,3 @@ fi
 %{_mandir}/man8/agetty.8*
 %lang(es) %{_mandir}/es/man8/agetty.8*
 %lang(ja) %{_mandir}/ja/man8/agetty.8*
-
-%if !%{with uClibc}
-%files -n rawdevices
-%defattr(644,root,root,755)
-%attr(755,root,root) /sbin/raw
-%attr(754,root,root) /etc/rc.d/init.d/rawdevices
-%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/rawdevices
-
-%{_mandir}/man8/raw.8*
-%lang(ja) %{_mandir}/ja/man8/raw.8*
-%endif
