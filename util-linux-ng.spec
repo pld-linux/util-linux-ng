@@ -15,7 +15,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.13
-Release:	0.%{snap}.1
+Release:	1.%{snap}.1
 License:	GPL
 Group:		Applications/System
 Source0:	%{name}-20070619.tar.gz
