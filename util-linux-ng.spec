@@ -3,7 +3,7 @@
 %bcond_with	uClibc	# don't build few utilities
 %bcond_without	selinux # build without SELinux support
 #
-%define	snap	20070619
+%define	snap	rc1
 Summary:	Collection of basic system utilities for Linux
 Summary(de.UTF-8):	Sammlung von grundlegenden Systemdienstprogrammen für Linux
 Summary(es.UTF-8):	Colectánea de utilitarios básicos de sistema para Linux
@@ -18,15 +18,14 @@ Version:	2.13
 Release:	1.%{snap}.1
 License:	GPL
 Group:		Applications/System
-Source0:	%{name}-20070619.tar.gz
-# Source0-md5:	0f9736ce415407c532bd37ef615f51b9
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}-%{snap}.tar.bz2
+# Source0-md5:	0dd0d97f20118d07f63a40769667353b
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
 Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
-Patch0:		%{name}-tinfo.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
@@ -48,6 +47,7 @@ Provides:	util-linux = %{version}-%{release}
 Obsoletes:	cramfs
 Obsoletes:	rawdevices
 Obsoletes:	schedutils
+Obsoletes:	setarch
 Obsoletes:	util-linux
 Obsoletes:	util-linux-suids
 Conflicts:	shadow-extras < 1:4.0.3-6
@@ -332,9 +332,7 @@ agetty is simple Linux getty with serial support.
 agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 
 %prep
-%setup -q -a1 -n %{name}
-%patch0 -p1
-sed -i -e 's#po/Makefile.in##g' configure.ac
+%setup -q -a1 -n %{name}-%{version}-%{snap}
 
 %build
 %{__libtoolize}
@@ -503,6 +501,7 @@ fi
 %attr(755,root,root) %{_bindir}/rev
 %attr(755,root,root) %{_bindir}/script
 %attr(755,root,root) %{_bindir}/scriptreplay
+%attr(755,root,root) %{_bindir}/setarch
 %attr(755,root,root) %{_bindir}/setsid
 %{!?with_uClibc:%attr(755,root,root) %{_bindir}/setterm}
 %attr(755,root,root) %{_bindir}/tailf
@@ -556,6 +555,7 @@ fi
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/partx.8*
+%{_mandir}/man8/setarch.8*
 
 %lang(cs) %{_mandir}/cs/man1/write.1*
 
