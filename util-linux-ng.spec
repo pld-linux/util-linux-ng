@@ -267,6 +267,7 @@ Summary:	chkdupexe - find duplicate executables
 Summary(pl.UTF-8):	chkdupexe odszukuje powtarzające się pliki uruchamialne
 Group:		Applications/System
 Provides:	util-linux-chkdupexe = %{version}-%{release}
+Obsoletes:	util-linux-chkdupexe
 
 %description chkdupexe
 chkdupexe will scan the union of $PATH and a hardcoded list of common
