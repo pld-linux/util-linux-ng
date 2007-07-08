@@ -1,3 +1,5 @@
+# TODO:
+# - if it obsoletes setarch, compat symlinks and P/O list should be merged
 #
 # Conditional build:
 %bcond_with	uClibc	# don't build few utilities
