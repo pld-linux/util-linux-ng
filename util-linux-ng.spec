@@ -5,7 +5,7 @@
 %bcond_with	uClibc	# don't build few utilities
 %bcond_without	selinux # build without SELinux support
 #
-%define	snap	rc1
+%define	snap	rc2
 Summary:	Collection of basic system utilities for Linux
 Summary(de.UTF-8):	Sammlung von grundlegenden Systemdienstprogrammen für Linux
 Summary(es.UTF-8):	Colectánea de utilitarios básicos de sistema para Linux
@@ -21,7 +21,7 @@ Release:	1.%{snap}.1
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}-%{snap}.tar.bz2
-# Source0-md5:	0dd0d97f20118d07f63a40769667353b
+# Source0-md5:	284e98596a9b2be663d82dc6c7dab309
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
@@ -513,6 +513,7 @@ fi
 %attr(755,root,root) %{_bindir}/whereis
 %attr(2755,root,tty) %{_bindir}/write
 %attr(755,root,root) %{_sbindir}/readprofile
+%attr(755,root,root) %{_sbindir}/rtcwake
 
 %{_mandir}/man1/cal.1*
 %{_mandir}/man1/chrt.1*
@@ -558,6 +559,7 @@ fi
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/partx.8*
+%{_mandir}/man8/rtcwake.8*
 %{_mandir}/man8/setarch.8*
 
 %lang(cs) %{_mandir}/cs/man1/write.1*
