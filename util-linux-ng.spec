@@ -14,7 +14,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.13
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}.tar.bz2
@@ -367,7 +367,7 @@ CPPFLAGS="-I/usr/include/ncurses"; export CPPFLAGS
 %{__make}
 
 %ifarch ppc
-%{__cc} %{rpmcflags} %{rpmldflags} clock-ppc.c -o clock-ppc
+%{__cc} %{rpmcflags} %{rpmldflags} hwclock/clock-ppc.c -o hwclock/clock-ppc
 %endif
 
 cd sys-utils
@@ -396,7 +396,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 
 %ifarch ppc
 mv -f $RPM_BUILD_ROOT/sbin/hwclock $RPM_BUILD_ROOT/sbin/hwclock.rtc
-install clock-ppc $RPM_BUILD_ROOT/sbin/hwclock.adb
+install hwclock/clock-ppc $RPM_BUILD_ROOT/sbin/hwclock.adb
 #yneed fix:
 # hwclock.adb is for PowerMac (default)
 # hwclock.rtc is for RS/6000 (PreP,CHRP)
