@@ -26,6 +26,7 @@ Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
 Patch0:		%{name}-man.patch
+Patch1:		%{name}-ppc.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
@@ -339,6 +340,7 @@ agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 %prep
 %setup -q -a1
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__libtoolize}
