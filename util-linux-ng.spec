@@ -1,11 +1,8 @@
-# TODO:
-# - if it obsoletes setarch, compat symlinks and P/O list should be merged
 #
 # Conditional build:
 %bcond_with	uClibc	# don't build few utilities
 %bcond_without	selinux # build without SELinux support
 #
-%define	snap	rc2
 Summary:	Collection of basic system utilities for Linux
 Summary(de.UTF-8):	Sammlung von grundlegenden Systemdienstprogrammen für Linux
 Summary(es.UTF-8):	Colectánea de utilitarios básicos de sistema para Linux
@@ -17,17 +14,18 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.13
-Release:	1.%{snap}.1
+Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}-%{snap}.tar.bz2
-# Source0-md5:	284e98596a9b2be663d82dc6c7dab309
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}.tar.bz2
+# Source0-md5:	2175a6e64ba0cf8ff05402eaee33e4b0
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
 Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
+Patch0:		%{name}-man.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
@@ -45,11 +43,15 @@ BuildRequires:	texinfo
 %{!?with_uClibc:BuildRequires:	zlib-devel}
 %{!?with_uClibc:Requires:	pam >= 0.99.7.1}
 Provides:	fdisk
+Provides:	linux32
+Provides:	sparc32
 Provides:	util-linux = %{version}-%{release}
 Obsoletes:	cramfs
 Obsoletes:	rawdevices
 Obsoletes:	schedutils
 Obsoletes:	setarch
+Obsoletes:	linux32
+Obsoletes:	sparc32
 Obsoletes:	util-linux
 Obsoletes:	util-linux-suids
 Conflicts:	shadow-extras < 1:4.0.3-6
@@ -335,7 +337,8 @@ agetty is simple Linux getty with serial support.
 agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 
 %prep
-%setup -q -a1 -n %{name}-%{version}-%{snap}
+%setup -q -a1
+%patch0 -p1
 
 %build
 %{__libtoolize}
@@ -421,7 +424,7 @@ rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
 	$RPM_BUILD_ROOT%{_mandir}/*/man5/nfs.5 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man8/{display-services,elvtune,fast*,halt,initctl,need,provide,reboot,setfdprm,shutdown,simpleinit,sln,vigr,vipw}.8
 
-%ifnarch %{ix86}
+%ifnarch %{ix86} %{x8664}
 rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{ramsize,rdev,rootflags,vidmode}.8
 %endif
 %ifarch sparc sparc64
@@ -505,6 +508,37 @@ fi
 %attr(755,root,root) %{_bindir}/script
 %attr(755,root,root) %{_bindir}/scriptreplay
 %attr(755,root,root) %{_bindir}/setarch
+%if %{_lib} == "lib64"
+%attr(755,root,root) %{_bindir}/linux32
+%attr(755,root,root) %{_bindir}/linux64
+%{_mandir}/man8/linux32*
+%{_mandir}/man8/linux64*
+%endif
+%ifarch s390 s390x
+%attr(755,root,root) %{_bindir}/s390*
+%{_mandir}/man8/s390*
+%endif
+%ifarch %{ix86} %{x8664}
+%attr(755,root,root) %{_bindir}/i386
+%attr(755,root,root) %{_bindir}/x86_64
+%{_mandir}/man8/i386*
+%{_mandir}/man8/x86_64*
+%endif
+%ifarch ppc ppc64
+%attr(755,root,root) %{_bindir}/ppc*
+%{_mandir}/man8/ppc*
+%endif
+%ifarch sparc sparc64
+%attr(755,root,root) %{_bindir}/sparc*
+%{_mandir}/man8/sparc*
+%endif
+%ifarch ia64
+%attr(755,root,root) %{_bindir}/i386
+%attr(755,root,root) %{_bindir}/ia64
+%{_mandir}/man8/i386*
+%{_mandir}/man8/ia64*
+%endif
+
 %attr(755,root,root) %{_bindir}/setsid
 %{!?with_uClibc:%attr(755,root,root) %{_bindir}/setterm}
 %attr(755,root,root) %{_bindir}/tailf
@@ -810,7 +844,7 @@ fi
 
 %attr(755,root,root) %{_bindir}/cytune
 
-%ifarch %{ix86}
+%ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_sbindir}/ramsize
 %attr(755,root,root) %{_sbindir}/rdev
 %attr(755,root,root) %{_sbindir}/rootflags
