@@ -14,7 +14,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.13
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}.tar.bz2
@@ -508,21 +508,20 @@ fi
 %attr(755,root,root) %{_bindir}/script
 %attr(755,root,root) %{_bindir}/scriptreplay
 %attr(755,root,root) %{_bindir}/setarch
-%if %{_lib} == "lib64"
-%attr(755,root,root) %{_bindir}/linux32
-%attr(755,root,root) %{_bindir}/linux64
-%{_mandir}/man8/linux32*
-%{_mandir}/man8/linux64*
-%endif
+%attr(755,root,root) %{_bindir}/linux*
+%{_mandir}/man8/linux*
 %ifarch s390 s390x
 %attr(755,root,root) %{_bindir}/s390*
 %{_mandir}/man8/s390*
 %endif
 %ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_bindir}/i386
-%attr(755,root,root) %{_bindir}/x86_64
 %{_mandir}/man8/i386*
+%ifarch %{x8664}
+%attr(755,root,root) %{_bindir}/x86_64
 %{_mandir}/man8/x86_64*
+%endif
+%{_mandir}/man8/i386*
 %endif
 %ifarch ppc ppc64
 %attr(755,root,root) %{_bindir}/ppc*
