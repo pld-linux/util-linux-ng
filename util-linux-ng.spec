@@ -14,7 +14,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.13
-Release:	3
+Release:	4
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}.tar.bz2
@@ -383,8 +383,6 @@ install -d $RPM_BUILD_ROOT/etc/{pam.d,rc.d/init.d,sysconfig,security} \
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install misc-utils/scriptreplay.1 $RPM_BUILD_ROOT%{_mandir}/man1/
-
 sed -i -e 's,/usr/spool/mail,/var/mail,g' $RPM_BUILD_ROOT%{_mandir}/man1/login.1
 
 mv $RPM_BUILD_ROOT%{_sbindir}/{addpart,delpart,partx} $RPM_BUILD_ROOT/sbin
@@ -508,7 +506,6 @@ fi
 %attr(755,root,root) %{_bindir}/renice
 %attr(755,root,root) %{_bindir}/rev
 %attr(755,root,root) %{_bindir}/script
-%attr(755,root,root) %{_bindir}/scriptreplay
 %attr(755,root,root) %{_bindir}/setarch
 %attr(755,root,root) %{_bindir}/linux*
 %{_mandir}/man8/linux*
@@ -578,7 +575,6 @@ fi
 %{_mandir}/man1/rename.1*
 %{_mandir}/man1/setsid.1*
 %{_mandir}/man1/script.1*
-%{_mandir}/man1/scriptreplay.1*
 %{!?with_uClibc:%{_mandir}/man1/setterm.1*}
 %{_mandir}/man1/tailf.1*
 %{_mandir}/man1/taskset.1*
