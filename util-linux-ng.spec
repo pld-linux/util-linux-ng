@@ -13,12 +13,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.13
-Release:	5
+Version:	2.13.0.1
+Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	2175a6e64ba0cf8ff05402eaee33e4b0
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/%{name}-%{version}.tar.bz2
+# Source0-md5:	48bcb80babcf4d307c190871955f8025
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
@@ -27,7 +27,6 @@ Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
 Patch0:		%{name}-man.patch
 Patch1:		%{name}-ppc.patch
-Patch2:		%{name}-CVE-2007-5191.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
@@ -342,7 +341,6 @@ agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 %setup -q -a1
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 %{__libtoolize}
