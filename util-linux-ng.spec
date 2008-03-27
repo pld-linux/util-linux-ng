@@ -47,6 +47,7 @@ Provides:	linux32
 Provides:	sparc32
 Provides:	util-linux = %{version}-%{release}
 Obsoletes:	cramfs
+Obsoletes:	ionice
 Obsoletes:	rawdevices
 Obsoletes:	schedutils
 Obsoletes:	setarch
