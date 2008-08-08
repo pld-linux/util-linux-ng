@@ -13,12 +13,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.13.1.1
+Version:	2.14
 Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/%{name}-%{version}.tar.bz2
-# Source0-md5:	806259f4cf3e540e90e9db98105d080f
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.14/%{name}-%{version}.tar.bz2
+# Source0-md5:	23f227da49df36f33fe47e917e332cd8
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
@@ -26,7 +26,7 @@ Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
 Patch0:		%{name}-ppc.patch
-Patch1:		%{name}-dm_crypt.patch
+Patch1:		%{name}-ncurses.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
@@ -341,7 +341,7 @@ agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 %prep
 %setup -q -a1
 %patch0 -p1
-%patch1 -p1
+%patch1 -p0
 
 %build
 %{__libtoolize}
@@ -350,7 +350,7 @@ agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 %{__autoconf}
 %{__autoheader}
 %{__automake}
-CPPFLAGS="-I/usr/include/ncurses"; export CPPFLAGS
+CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"; export CPPFLAGS
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
@@ -489,7 +489,6 @@ fi
 %attr(755,root,root) %{_bindir}/colrm
 %attr(755,root,root) %{_bindir}/column
 %attr(755,root,root) %{_bindir}/ddate
-%attr(755,root,root) %{_bindir}/fdformat
 %attr(755,root,root) %{_bindir}/flock
 %attr(755,root,root) %{_bindir}/getopt
 %attr(755,root,root) %{_bindir}/hexdump
@@ -507,6 +506,7 @@ fi
 %attr(755,root,root) %{_bindir}/renice
 %attr(755,root,root) %{_bindir}/rev
 %attr(755,root,root) %{_bindir}/script
+%attr(755,root,root) %{_bindir}/scriptreplay
 %attr(755,root,root) %{_bindir}/setarch
 %attr(755,root,root) %{_bindir}/linux*
 %{_mandir}/man8/linux*
@@ -545,6 +545,8 @@ fi
 %{!?with_uClibc:%attr(755,root,root) %{_bindir}/ul}
 %attr(755,root,root) %{_bindir}/whereis
 %attr(2755,root,tty) %{_bindir}/write
+%attr(755,root,root) %{_sbindir}/fdformat
+%attr(755,root,root) %{_sbindir}/ldattach
 %attr(755,root,root) %{_sbindir}/readprofile
 %attr(755,root,root) %{_sbindir}/rtcwake
 
@@ -576,6 +578,7 @@ fi
 %{_mandir}/man1/rename.1*
 %{_mandir}/man1/setsid.1*
 %{_mandir}/man1/script.1*
+%{_mandir}/man1/scriptreplay.1*
 %{!?with_uClibc:%{_mandir}/man1/setterm.1*}
 %{_mandir}/man1/tailf.1*
 %{_mandir}/man1/taskset.1*
@@ -589,6 +592,7 @@ fi
 %{_mandir}/man8/delpart.8*
 %{_mandir}/man8/fdformat.8*
 %{_mandir}/man8/isosize.8*
+%{_mandir}/man8/ldattach.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/rtcwake.8*
