@@ -36,6 +36,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	intltool
 BuildRequires:	libtool
 %{?with_selinux:BuildRequires:	libselinux-devel}
+%{?with_selinux:BuildRequires:	libsepol-devel}
 %{!?with_uClibc:BuildRequires:	ncurses-devel >= 5.0}
 %{!?with_uClibc:BuildRequires:	pam-devel >= 0.99.7.1}
 BuildRequires:	rpmbuild(macros) >= 1.470
