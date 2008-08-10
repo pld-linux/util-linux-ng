@@ -31,14 +31,14 @@ URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	cryptsetup-luks-devel
 BuildRequires:	e2fsprogs-devel >= 1.36
 BuildRequires:	gettext-devel
 BuildRequires:	intltool
+BuildRequires:	libtool
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{!?with_uClibc:BuildRequires:	ncurses-devel >= 5.0}
 %{!?with_uClibc:BuildRequires:	pam-devel >= 0.99.7.1}
-BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	rpmbuild(macros) >= 1.470
 BuildRequires:	sed >= 4.0
 BuildRequires:	texinfo
 %{!?with_uClibc:BuildRequires:	zlib-devel}
@@ -209,7 +209,6 @@ Summary(ru.UTF-8):	Программы для монтирования и раз�
 Summary(tr.UTF-8):	Dosya sistemlerini bağlamak ve çözmek için programlar
 Summary(uk.UTF-8):	Програми для монтування та розмонтування файлових систем
 Group:		Applications/System
-Requires:	cryptsetup-luks >= 1.0.4
 Requires:	libgcrypt >= 1.2.0-6
 Requires:	libgpg-error >= 1.0-4
 
