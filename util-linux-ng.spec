@@ -14,7 +14,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.14.1
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.14/%{name}-%{version}.tar.bz2
@@ -443,13 +443,7 @@ fi
 %doc */README.* text-utils/LICENSE.pg NEWS
 
 %attr(755,root,root) /sbin/clock
-%ifarch ppc
-%attr(755,root,root) %config(noreplace) %verify(not link) /sbin/hwclock
-%attr(755,root,root) /sbin/hwclock.adb
-%attr(755,root,root) /sbin/hwclock.rtc
-%else
 %attr(755,root,root) /sbin/hwclock*
-%endif
 
 %{_mandir}/man8/clock.8*
 %{_mandir}/man8/hwclock.8*
