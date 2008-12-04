@@ -396,10 +396,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 %ifarch ppc
 mv -f $RPM_BUILD_ROOT/sbin/hwclock $RPM_BUILD_ROOT/sbin/hwclock.rtc
 install hwclock/clock-ppc $RPM_BUILD_ROOT/sbin/hwclock.adb
-#yneed fix:
-# hwclock.adb is for PowerMac (default)
-# hwclock.rtc is for RS/6000 (PreP,CHRP)
-ln -sf hwclock.adb $RPM_BUILD_ROOT/sbin/hwclock
+ln -sf hwclock.rtc $RPM_BUILD_ROOT/sbin/hwclock
 %endif
 
 ln -sf hwclock $RPM_BUILD_ROOT/sbin/clock
