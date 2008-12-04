@@ -367,10 +367,6 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"; export CPPFLAGS
 
 %{__make}
 
-%ifarch ppc
-%{__cc} %{rpmcflags} %{rpmldflags} hwclock/clock-ppc.c -o hwclock/clock-ppc
-%endif
-
 cd sys-utils
 makeinfo ipc.texi
 
@@ -392,12 +388,6 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 
 :> $RPM_BUILD_ROOT/etc/security/blacklist.login
 :> $RPM_BUILD_ROOT/var/lock/wtmpxlock
-
-%ifarch ppc
-mv -f $RPM_BUILD_ROOT/sbin/hwclock $RPM_BUILD_ROOT/sbin/hwclock.rtc
-install hwclock/clock-ppc $RPM_BUILD_ROOT/sbin/hwclock.adb
-ln -sf hwclock.rtc $RPM_BUILD_ROOT/sbin/hwclock
-%endif
 
 ln -sf hwclock $RPM_BUILD_ROOT/sbin/clock
 echo '.so hwclock.8' > $RPM_BUILD_ROOT%{_mandir}/man8/clock.8
