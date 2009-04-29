@@ -33,9 +33,9 @@ BuildRequires:	automake
 BuildRequires:	e2fsprogs-devel >= 1.36
 BuildRequires:	gettext-devel
 BuildRequires:	intltool
-BuildRequires:	libtool
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_selinux:BuildRequires:	libsepol-devel}
+BuildRequires:	libtool
 %{!?with_uClibc:BuildRequires:	ncurses-devel >= 5.0}
 %{!?with_uClibc:BuildRequires:	pam-devel >= 0.99.7.1}
 BuildRequires:	rpmbuild(macros) >= 1.470
@@ -49,10 +49,10 @@ Provides:	sparc32
 Provides:	util-linux = %{version}-%{release}
 Obsoletes:	cramfs
 Obsoletes:	ionice
+Obsoletes:	linux32
 Obsoletes:	rawdevices
 Obsoletes:	schedutils
 Obsoletes:	setarch
-Obsoletes:	linux32
 Obsoletes:	sparc32
 Obsoletes:	util-linux
 Obsoletes:	util-linux-suids
@@ -211,6 +211,7 @@ Summary(uk.UTF-8):	Програми для монтування та розмо�
 Group:		Applications/System
 Requires:	libgcrypt >= 1.2.0-6
 Requires:	libgpg-error >= 1.0-4
+Conflicts:	nfs-utils-common < 1.1.3-3
 
 %description -n mount
 mount is used for adding new filesystems, both local and networked, to
