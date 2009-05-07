@@ -13,12 +13,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.14.2
-Release:	2
+Version:	2.15
+Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.14/%{name}-%{version}.tar.bz2
-# Source0-md5:	b9d0053a22cfcbf0b9c0aa6d6eccfbc8
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
+# Source0-md5:	71919b69eeecbba05612224d8f2c450f
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
@@ -409,7 +409,7 @@ rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
 	$RPM_BUILD_ROOT%{_mandir}/man8/{vigr,vipw}.8 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man1/{arch,chfn,chsh,clear,last,mesg,newgrp,od,passwd,reset,sg,wall}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man5/nfs.5 \
-	$RPM_BUILD_ROOT%{_mandir}/*/man8/{display-services,elvtune,fast*,halt,initctl,need,provide,reboot,setfdprm,shutdown,simpleinit,sln,vigr,vipw}.8
+	$RPM_BUILD_ROOT%{_mandir}/*/man8/{display-services,elvtune,fast*,halt,initctl,need,provide,reboot,setfdprm,shutdown,simpleinit,sln,vigr,vipw,raw}.8
 
 %ifnarch %{ix86} %{x8664}
 rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{ramsize,rdev,rootflags,vidmode}.8
@@ -473,12 +473,14 @@ fi
 %attr(755,root,root) %{_bindir}/getopt
 %attr(755,root,root) %{_bindir}/hexdump
 %attr(755,root,root) %{_bindir}/ionice
+%attr(755,root,root) %{_bindir}/ipcmk
 %attr(755,root,root) %{_bindir}/ipcrm
 %attr(755,root,root) %{_bindir}/ipcs
 %attr(755,root,root) %{_bindir}/isosize
 %attr(755,root,root) %{_bindir}/line
 %attr(755,root,root) %{_bindir}/logger
 %attr(755,root,root) %{_bindir}/look
+%attr(755,root,root) %{_bindir}/lscpu
 %attr(755,root,root) %{_bindir}/mcookie
 %attr(755,root,root) %{_bindir}/namei
 %{!?with_uClibc:%attr(755,root,root) %{_bindir}/pg}
@@ -543,11 +545,13 @@ fi
 %{_mandir}/man1/hexdump.1*
 %{_mandir}/man1/ionice.1*
 %{_mandir}/man1/ipcrm.1*
+%{_mandir}/man1/ipcmk.1*
 %{_mandir}/man1/ipcs.1*
 %{_mandir}/man1/kill.1*
 %{_mandir}/man1/line.1*
 %{_mandir}/man1/logger.1*
 %{_mandir}/man1/look.1*
+%{_mandir}/man1/lscpu.1*
 %{_mandir}/man1/mcookie.1*
 %{!?with_uClibc:%{_mandir}/man1/more.1*}
 %{_mandir}/man1/namei.1*
