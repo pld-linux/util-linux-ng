@@ -14,7 +14,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.15
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
@@ -338,6 +338,24 @@ agetty is simple Linux getty with serial support.
 %description -n agetty -l pl.UTF-8
 agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 
+%package devel
+Summary:	util-linux-ng libraries and headers
+Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description devel
+This package contains the libraries and header files needed to
+develop programs using util-linux-ng libraries.
+
+%package static
+Summary:	util-linux-ng static libraries
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+
+%description static
+Static libraries needed to develop programs using util-linux-ng
+libraries.
+
 %prep
 %setup -q -a1
 %patch0 -p1
@@ -353,6 +371,7 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"; export CPPFLAGS
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
+	--libdir=/%{_lib} \
 	--with%{?with_uClibc:out}-pam \
 	--with%{!?with_selinux:out}-selinux \
 	--disable-use-tty-group \
@@ -364,7 +383,7 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"; export CPPFLAGS
 	--enable-rdev \
 	--enable-write \
 	--with-audit \
-	--with-fsprobe=blkid
+	--with-fsprobe=builtin
 
 %{__make}
 
@@ -453,14 +472,23 @@ fi
 %lang(ja) %{_mandir}/ja/man8/clock.8*
 %lang(ja) %{_mandir}/ja/man8/hwclock.8*
 
+%attr(755,root,root) /sbin/blkid
+%attr(755,root,root) /sbin/findfs
+
+%attr(755,root,root) /%{_lib}/libblkid.so.*.*
+%attr(755,root,root) %ghost /%{_lib}/libblkid.so.1
+%{_mandir}/man3/libblkid.3*
+%{_mandir}/man8/blkid.8*
+%{_mandir}/man8/findfs.8*
+
 %attr(755,root,root) /bin/dmesg
 %attr(755,root,root) /bin/kill
 %{!?with_uClibc:%attr(755,root,root) /bin/more}
+%attr(755,root,root) /sbin/addpart
+%attr(755,root,root) /sbin/ctrlaltdel
+%attr(755,root,root) /sbin/delpart
 %attr(755,root,root) /sbin/mkfs
 %attr(755,root,root) /sbin/mkswap
-%attr(755,root,root) /sbin/ctrlaltdel
-%attr(755,root,root) /sbin/addpart
-%attr(755,root,root) /sbin/delpart
 %attr(755,root,root) /sbin/partx
 %attr(755,root,root) %{_bindir}/cal
 %attr(755,root,root) %{_bindir}/chrt
@@ -503,7 +531,6 @@ fi
 %attr(755,root,root) %{_bindir}/x86_64
 %{_mandir}/man8/x86_64*
 %endif
-%{_mandir}/man8/i386*
 %endif
 %ifarch ppc ppc64
 %attr(755,root,root) %{_bindir}/ppc*
@@ -1000,3 +1027,14 @@ fi
 %{_mandir}/man8/agetty.8*
 %lang(es) %{_mandir}/es/man8/agetty.8*
 %lang(ja) %{_mandir}/ja/man8/agetty.8*
+
+%files devel
+%defattr(644,root,root,755)
+%attr(755,root,root) /%{_lib}/libblkid.so
+/%{_lib}/libblkid.la
+%{_includedir}/blkid
+%{_pkgconfigdir}/blkid.pc
+
+%files static
+%defattr(644,root,root,755)
+/%{_lib}/libblkid.a
