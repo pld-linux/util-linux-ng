@@ -1,7 +1,9 @@
 #
 # Conditional build:
-%bcond_with	uClibc	# don't build few utilities
-%bcond_without	selinux # build without SELinux support
+%bcond_without	initrd		# don't build initrd version
+%bcond_with	uClibc		# link initrd version with static glibc instead of uClibc
+%bcond_without	dietlibc	# link initrd version with dietlibc instead of uClibc
+%bcond_without	selinux 	# build without SELinux support
 #
 Summary:	Collection of basic system utilities for Linux
 Summary(de.UTF-8):	Sammlung von grundlegenden Systemdienstprogrammen für Linux
@@ -26,6 +28,7 @@ Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
 Patch0:		%{name}-ppc.patch
+Patch1:		%{name}-ac.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
@@ -35,13 +38,25 @@ BuildRequires:	intltool
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_selinux:BuildRequires:	libsepol-devel}
 BuildRequires:	libtool
-%{!?with_uClibc:BuildRequires:	ncurses-devel >= 5.0}
-%{!?with_uClibc:BuildRequires:	pam-devel >= 0.99.7.1}
+BuildRequires:	ncurses-devel >= 5.0
+BuildRequires:	pam-devel >= 0.99.7.1
 BuildRequires:	rpmbuild(macros) >= 1.470
 BuildRequires:	sed >= 4.0
 BuildRequires:	texinfo
-%{!?with_uClibc:BuildRequires:	zlib-devel}
-%{!?with_uClibc:Requires:	pam >= 0.99.7.1}
+BuildRequires:	zlib-devel
+%if %{with initrd}
+	%if %{with uClibc}
+BuildRequires:	uClibc-static >= 2:0.9.29
+	%else
+		%if %{with dietlibc}
+BuildRequires:	dietlibc-static
+BuildRequires:	libuuid-dietlibc
+		%else
+BuildRequires:	glibc-static
+		%endif
+	%endif
+%endif
+Requires:	pam >= 0.99.7.1
 Provides:	fdisk
 Provides:	linux32
 Provides:	sparc32
@@ -59,6 +74,10 @@ Conflicts:	shadow-extras < 1:4.0.3-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		debugcflags	-O1 -g
+
+# for some reason known only to rpm there must be "\\|" not "\|" here
+%define		dietarch	%(echo %{_target_cpu} | sed -e 's/i.86\\|pentium.\\|athlon/i386/;s/amd64/x86_64/;s/armv.*/arm/')
+%define		dietlibdir	%{_prefix}/lib/dietlibc/lib-%{dietarch}
 
 %description
 util-linux contains a large variety of low-level system utilities
@@ -355,9 +374,24 @@ Requires:	%{name}-devel = %{version}-%{release}
 Static libraries needed to develop programs using util-linux-ng
 libraries.
 
+%package initrd
+Summary:	blkid - initrd version
+Summary(pl.UTF-8):	blkid - wersja dla initrd
+Group:		Base
+Conflicts:	geninitrd < 10000.10
+
+%description initrd
+This package includes a blkid utility to recognize partitions by label
+or UUID - staticaly linked for initrd.
+
+%description initrd -l pl.UTF-8
+Pakiet ten zawiera narzędzie blkid do rozpoznawania partycji przez
+etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
+
 %prep
 %setup -q -a1
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__libtoolize}
@@ -367,11 +401,38 @@ libraries.
 %{__autoheader}
 %{__automake}
 CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"; export CPPFLAGS
+%if %{with initrd}
+%configure \
+	%{?with_uClibc:CC="%{_target_cpu}-uclibc-gcc"} \
+	%{?with_dietlibc:CC="diet %{__cc}"} \
+	--disable-shared \
+	--enable-static \
+	--disable-use-tty-group \
+	--disable-login-utils \
+	--disable-schedutils \
+	--disable-wall \
+	--without-pam \
+	--without-selinux \
+	--without-audit \
+	--without-ncurses \
+	--with-fsprobe=builtin
+
+%{__make} -C libs/blkid \
+%if %{with dietlibc}
+	CPPFLAGS="-Dprogram_invocation_short_name=NULL" \
+	LDFLAGS="-lcompat"
+%endif
+
+cp libs/blkid/bin/blkid blkid.initrd
+cp libs/blkid/bin/findfs findfs.initrd
+%{__make} clean
+%endif
+
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
-	--with%{?with_uClibc:out}-pam \
+	--with-pam \
 	--with%{!?with_selinux:out}-selinux \
 	--disable-use-tty-group \
 	--disable-wall \
@@ -436,7 +497,13 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{ramsize,rdev,rootflags,vidmode}.8
 rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{cfdisk,sfdisk}.8
 %endif
 
-%{!?with_uClibc:%find_lang %{name}}
+%if %{with initrd}
+install -d $RPM_BUILD_ROOT%{_libdir}/initrd
+install blkid.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/blkid
+install findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
+%endif
+
+%find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -459,7 +526,7 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del blockdev
 fi
 
-%files %{!?with_uClibc:-f %{name}.lang}
+%files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc */README.* text-utils/LICENSE.pg NEWS
 
@@ -484,7 +551,7 @@ fi
 
 %attr(755,root,root) /bin/dmesg
 %attr(755,root,root) /bin/kill
-%{!?with_uClibc:%attr(755,root,root) /bin/more}
+%attr(755,root,root) /bin/more
 %attr(755,root,root) /sbin/addpart
 %attr(755,root,root) /sbin/ctrlaltdel
 %attr(755,root,root) /sbin/delpart
@@ -512,7 +579,7 @@ fi
 %attr(755,root,root) %{_bindir}/lscpu
 %attr(755,root,root) %{_bindir}/mcookie
 %attr(755,root,root) %{_bindir}/namei
-%{!?with_uClibc:%attr(755,root,root) %{_bindir}/pg}
+%attr(755,root,root) %{_bindir}/pg
 %attr(755,root,root) %{_bindir}/rename
 %attr(755,root,root) %{_bindir}/renice
 %attr(755,root,root) %{_bindir}/rev
@@ -549,10 +616,10 @@ fi
 %endif
 
 %attr(755,root,root) %{_bindir}/setsid
-%{!?with_uClibc:%attr(755,root,root) %{_bindir}/setterm}
+%attr(755,root,root) %{_bindir}/setterm
 %attr(755,root,root) %{_bindir}/tailf
 %attr(755,root,root) %{_bindir}/taskset
-%{!?with_uClibc:%attr(755,root,root) %{_bindir}/ul}
+%attr(755,root,root) %{_bindir}/ul
 %attr(755,root,root) %{_bindir}/whereis
 %attr(2755,root,tty) %{_bindir}/write
 %attr(755,root,root) %{_sbindir}/fdformat
@@ -581,9 +648,9 @@ fi
 %{_mandir}/man1/look.1*
 %{_mandir}/man1/lscpu.1*
 %{_mandir}/man1/mcookie.1*
-%{!?with_uClibc:%{_mandir}/man1/more.1*}
+%{_mandir}/man1/more.1*
 %{_mandir}/man1/namei.1*
-%{!?with_uClibc:%{_mandir}/man1/pg.1*}
+%{_mandir}/man1/pg.1*
 %{_mandir}/man1/readprofile.1*
 %{_mandir}/man1/renice.1*
 %{_mandir}/man1/rev.1*
@@ -591,10 +658,10 @@ fi
 %{_mandir}/man1/setsid.1*
 %{_mandir}/man1/script.1*
 %{_mandir}/man1/scriptreplay.1*
-%{!?with_uClibc:%{_mandir}/man1/setterm.1*}
+%{_mandir}/man1/setterm.1*
 %{_mandir}/man1/tailf.1*
 %{_mandir}/man1/taskset.1*
-%{!?with_uClibc:%{_mandir}/man1/ul.1*}
+%{_mandir}/man1/ul.1*
 %{_mandir}/man1/whereis.1*
 %{_mandir}/man1/write.1*
 
@@ -798,13 +865,13 @@ fi
 %attr(755,root,root) /sbin/fsck.minix
 %attr(755,root,root) /sbin/mkfs.minix
 %ifnarch sparc sparc64
-%{!?with_uClibc:%attr(755,root,root) /sbin/cfdisk}
+%attr(755,root,root) /sbin/cfdisk
 %attr(755,root,root) /sbin/sfdisk
 %endif
 
 %{_mandir}/man8/fdisk.8*
 %ifnarch sparc sparc64
-%{!?with_uClibc:%{_mandir}/man8/cfdisk.8*}
+%{_mandir}/man8/cfdisk.8*
 %{_mandir}/man8/sfdisk.8*
 %endif
 %{_mandir}/man8/fsck.minix.8*
@@ -819,7 +886,7 @@ fi
 
 %lang(fr) %{_mandir}/fr/man8/fdisk.8*
 %ifnarch sparc sparc64
-%{!?with_uClibc:%lang(fr) %{_mandir}/fr/man8/cfdisk.8*}
+%lang(fr) %{_mandir}/fr/man8/cfdisk.8*
 %lang(fr) %{_mandir}/fr/man8/sfdisk.8*
 %endif
 %lang(fr) %{_mandir}/fr/man8/mkfs.minix.8*
@@ -829,12 +896,12 @@ fi
 
 %lang(it) %{_mandir}/it/man8/fdisk.8*
 %ifnarch sparc sparc64
-%{!?with_uClibc:%lang(it) %{_mandir}/it/man8/cfdisk.8*}
+%lang(it) %{_mandir}/it/man8/cfdisk.8*
 %endif
 
 %lang(ja) %{_mandir}/ja/man8/fdisk.8*
 %ifnarch sparc sparc64
-%{!?with_uClibc:%lang(ja) %{_mandir}/ja/man8/cfdisk.8*}
+%lang(ja) %{_mandir}/ja/man8/cfdisk.8*
 %lang(ja) %{_mandir}/ja/man8/sfdisk.8*
 %endif
 %lang(ja) %{_mandir}/ja/man8/fsck.minix.8*
@@ -852,8 +919,8 @@ fi
 %lang(pl) %{_mandir}/pl/man8/mkfs.minix.8*
 %lang(pl) %{_mandir}/pl/man8/mkfs.8*
 
-%{!?with_uClibc:%attr(755,root,root) /sbin/fsck.cramfs}
-%{!?with_uClibc:%attr(755,root,root) /sbin/mkfs.cramfs}
+%attr(755,root,root) /sbin/fsck.cramfs
+%attr(755,root,root) /sbin/mkfs.cramfs
 %attr(755,root,root) /sbin/mkfs.bfs
 
 %attr(755,root,root) %{_bindir}/cytune
@@ -1003,7 +1070,6 @@ fi
 %lang(ja) %{_mandir}/ja/man8/tunelp.8*
 %lang(pl) %{_mandir}/pl/man8/tunelp.8*
 
-%if !%{with uClibc}
 %files -n login
 %defattr(644,root,root,755)
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/login
@@ -1019,7 +1085,6 @@ fi
 %lang(ja) %{_mandir}/ja/man1/login.1*
 %lang(ko) %{_mandir}/ko/man1/login.1*
 %lang(pl) %{_mandir}/pl/man1/login.1*
-%endif
 
 %files -n agetty
 %defattr(644,root,root,755)
@@ -1039,3 +1104,10 @@ fi
 %files static
 %defattr(644,root,root,755)
 /%{_lib}/libblkid.a
+
+%if %{with initrd}
+%files initrd
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/initrd/blkid
+%attr(755,root,root) %{_libdir}/initrd/findfs
+%endif
