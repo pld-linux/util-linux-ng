@@ -30,7 +30,6 @@ URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	e2fsprogs-devel >= 1.36
 BuildRequires:	gettext-devel
 BuildRequires:	intltool
 %{?with_selinux:BuildRequires:	libselinux-devel}
