@@ -897,6 +897,9 @@ fi
 
 %ghost /var/lock/wtmpxlock
 
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
+
 %files -n blockdev
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/blockdev
