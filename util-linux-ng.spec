@@ -443,9 +443,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post	-p	/sbin/postshell
 -/usr/sbin/fix-info-dir -c %{_infodir}
+-/sbin/ldconfig
 
 %postun	-p	/sbin/postshell
 -/usr/sbin/fix-info-dir -c %{_infodir}
+-/sbin/ldconfig
 
 %post -n blockdev
 /sbin/chkconfig --add blockdev
@@ -896,9 +898,6 @@ fi
 %{_infodir}/ipc*
 
 %ghost /var/lock/wtmpxlock
-
-%post	-p /sbin/ldconfig
-%postun	-p /sbin/ldconfig
 
 %files -n blockdev
 %defattr(644,root,root,755)
