@@ -1,0 +1,64 @@
+The VFS union mount patches require some changes to util-linux and
+e2fsprogs to support the union mount option and the ext2 whiteout
+feature flag.  We are not submitting them for formal review at this
+time, but the patches are below for quick reference.  They are also
+available in git repos linked to from the Union Mount HOWTO page:
+
+http://valerieaurora.org/union/
+
+-VAL
+
+From: Valerie Aurora Henson <vaurora@redhat.com>
+Date: Sat, 21 Mar 2009 20:56:57 -0700
+Subject: [PATCH 1/1] union mount patches from:
+
+ftp://ftp.suse.com/pub/people/jblunck/union-mount/util-linux-2.13-union_mount.diff
+---
+ mount/mount.c           |    5 +++++
+ mount/mount_constants.h |    3 +++
+ 2 files changed, 8 insertions(+), 0 deletions(-)
+
+diff --git a/mount/mount.c b/mount/mount.c
+index 9cbc466..9bf766b 100644
+--- a/mount/mount.c
++++ b/mount/mount.c
+@@ -138,6 +138,7 @@ static const struct opt_map opt_map[] = {
+   { "sync",	0, 0, MS_SYNCHRONOUS},	/* synchronous I/O */
+   { "async",	0, 1, MS_SYNCHRONOUS},	/* asynchronous I/O */
+   { "dirsync",	0, 0, MS_DIRSYNC},	/* synchronous directory modifications */
++  { "union",	0, 0, MS_UNION  },	/* Union mount */
+   { "remount",  0, 0, MS_REMOUNT},      /* Alter flags of mounted FS */
+   { "bind",	0, 0, MS_BIND   },	/* Remount part of tree elsewhere */
+   { "rbind",	0, 0, MS_BIND|MS_REC }, /* Idem, plus mounted subtrees */
+@@ -1638,6 +1639,7 @@ static struct option longopts[] = {
+ 	{ "make-rslave", 0, 0, 141 },
+ 	{ "make-rprivate", 0, 0, 142 },
+ 	{ "make-runbindable", 0, 0, 143 },
++	{ "union", 0, 0, 144 },
+ 	{ "internal-only", 0, 0, 'i' },
+ 	{ NULL, 0, 0, 0 }
+ };
+@@ -1929,6 +1931,9 @@ main(int argc, char *argv[]) {
+ 		case 143:
+ 			mounttype = (MS_UNBINDABLE | MS_REC);
+ 			break;
++		case 144: /* union */
++			mounttype = MS_UNION;
++			break;
+ 
+ 		case '?':
+ 		default:
+diff --git a/mount/mount_constants.h b/mount/mount_constants.h
+index dc3ca27..fb4c663 100644
+--- a/mount/mount_constants.h
++++ b/mount/mount_constants.h
+@@ -39,6 +39,9 @@ flags had been set; if we have a union with more than one element - fail;
+ if we have a stack or plain mount - mount atop of it, forming a stack. */
+ #define	MS_OVER		0x200	/* 512 */
+ #endif
++#ifndef MS_UNION
++#define MS_UNION	0x100	/* 256: Mount on top of a union */
++#endif
+ #ifndef MS_NOATIME
+ #define MS_NOATIME	0x400	/* 1024: Do not update access times. */
+ #endif
