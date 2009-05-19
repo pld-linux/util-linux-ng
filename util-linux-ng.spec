@@ -433,7 +433,6 @@ cp libs/blkid/bin/findfs findfs.initrd
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
-	--libdir=/%{_lib} \
 	--with-pam \
 	--with%{!?with_selinux:out}-selinux \
 	--disable-use-tty-group \
@@ -455,7 +454,7 @@ makeinfo ipc.texi
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{pam.d,rc.d/init.d,sysconfig,security} \
-	$RPM_BUILD_ROOT/var/lock
+	$RPM_BUILD_ROOT{/%{_lib},/var/lock}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -470,6 +469,11 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 
 :> $RPM_BUILD_ROOT/etc/security/blacklist.login
 :> $RPM_BUILD_ROOT/var/lock/wtmpxlock
+:> $RPM_BUILD_ROOT%{_sysconfdir}/blkid.tab
+
+mv $RPM_BUILD_ROOT%{_libdir}/libblkid.so.* $RPM_BUILD_ROOT/%{_lib}
+ln -sf /%{_lib}/$(basename $RPM_BUILD_ROOT/%{_lib}/libblkid.so.*.*.*) \
+	 $RPM_BUILD_ROOT%{_libdir}/libblkid.so
 
 ln -sf hwclock $RPM_BUILD_ROOT/sbin/clock
 echo '.so hwclock.8' > $RPM_BUILD_ROOT%{_mandir}/man8/clock.8
@@ -542,6 +546,7 @@ fi
 %lang(ja) %{_mandir}/ja/man8/clock.8*
 %lang(ja) %{_mandir}/ja/man8/hwclock.8*
 
+%ghost %{_sysconfdir}/blkid.tab
 %attr(755,root,root) /sbin/blkid
 %attr(755,root,root) /sbin/findfs
 
@@ -1098,14 +1103,14 @@ fi
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) /%{_lib}/libblkid.so
-/%{_lib}/libblkid.la
+%attr(755,root,root) %{_libdir}/libblkid.so
+%{_libdir}/libblkid.la
 %{_includedir}/blkid
 %{_pkgconfigdir}/blkid.pc
 
 %files static
 %defattr(644,root,root,755)
-/%{_lib}/libblkid.a
+%{_libdir}/libblkid.a
 
 %if %{with initrd}
 %files initrd
