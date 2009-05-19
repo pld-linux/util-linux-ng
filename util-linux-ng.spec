@@ -16,7 +16,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.15
-Release:	3
+Release:	4
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
@@ -357,10 +357,17 @@ agetty is simple Linux getty with serial support.
 %description -n agetty -l pl.UTF-8
 agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 
+%package libs
+Summary:	util-linux-ng libraries
+Group:		Libraries
+
+%description libs
+util-linux-ng libraries.
+
 %package devel
 Summary:	util-linux-ng libraries and headers
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 This package contains the libraries and header files needed to
@@ -514,13 +521,11 @@ install findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post	-p	/sbin/postshell
+%post -p /sbin/postshell
 -/usr/sbin/fix-info-dir -c %{_infodir}
--/sbin/ldconfig
 
-%postun	-p	/sbin/postshell
+%postun -p /sbin/postshell
 -/usr/sbin/fix-info-dir -c %{_infodir}
--/sbin/ldconfig
 
 %post -n blockdev
 /sbin/chkconfig --add blockdev
@@ -531,6 +536,9 @@ if [ "$1" = "0" ]; then
 	%service blockdev stop
 	/sbin/chkconfig --del blockdev
 fi
+
+%post libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
@@ -550,9 +558,6 @@ fi
 %attr(755,root,root) /sbin/blkid
 %attr(755,root,root) /sbin/findfs
 
-%attr(755,root,root) /%{_lib}/libblkid.so.*.*
-%attr(755,root,root) %ghost /%{_lib}/libblkid.so.1
-%{_mandir}/man3/libblkid.3*
 %{_mandir}/man8/blkid.8*
 %{_mandir}/man8/findfs.8*
 
@@ -1101,12 +1106,18 @@ fi
 %lang(es) %{_mandir}/es/man8/agetty.8*
 %lang(ja) %{_mandir}/ja/man8/agetty.8*
 
+%files libs
+%defattr(644,root,root,755)
+%attr(755,root,root) /%{_lib}/libblkid.so.*.*
+%attr(755,root,root) %ghost /%{_lib}/libblkid.so.1
+
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libblkid.so
 %{_libdir}/libblkid.la
 %{_includedir}/blkid
 %{_pkgconfigdir}/blkid.pc
+%{_mandir}/man3/libblkid.3*
 
 %files static
 %defattr(644,root,root,755)
