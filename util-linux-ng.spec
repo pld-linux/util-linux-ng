@@ -402,7 +402,7 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 %{__autoconf}
 %{__autoheader}
 %{__automake}
-CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"; export CPPFLAGS
+CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_LLSEEK_PROTOTYPE"; export CPPFLAGS
 %if %{with initrd}
 %configure \
 	%{?with_uClibc:CC="%{_target_cpu}-uclibc-gcc"} \
@@ -421,7 +421,7 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"; export CPPFLAGS
 
 %{__make} -C libs/blkid \
 %if %{with dietlibc}
-	CPPFLAGS="-Dprogram_invocation_short_name=NULL" \
+	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
 	LDFLAGS="-lcompat"
 %endif
 
