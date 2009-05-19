@@ -16,7 +16,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.15
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
@@ -29,6 +29,7 @@ Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
 Patch0:		%{name}-ppc.patch
 Patch1:		%{name}-ac.patch
+Patch2:		%{name}-union-mount.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
@@ -392,6 +393,7 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 %setup -q -a1
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}
