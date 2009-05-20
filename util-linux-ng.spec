@@ -357,30 +357,41 @@ agetty is simple Linux getty with serial support.
 %description -n agetty -l pl.UTF-8
 agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 
-%package libs
-Summary:	util-linux-ng libraries
+%package -n libblkid
+Summary:	Library to handle device identification and token extraction
 Group:		Libraries
+Obsoletes:	util-linux-ng-libs
 
-%description libs
-util-linux-ng libraries.
+%description -n libblkid
+Library to handle device identification and token extraction.
 
-%package devel
-Summary:	util-linux-ng libraries and headers
+%package -n libblkid-devel
+Summary:	Library to handle device identification and token extraction - development files.
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	libblkid = %{version}-%{release}
+Obsoletes:	util-linux-ng-devel
 
-%description devel
-This package contains the libraries and header files needed to
-develop programs using util-linux-ng libraries.
+%description -n libblkid-devel
+Library to handle device identification and token extraction
+ - development files.
 
-%package static
-Summary:	util-linux-ng static libraries
+%package -n libblkid-static
+Summary:	Static library to handle device identification and token extraction
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
+Requires:	libblkid-devel = %{version}-%{release}
+Obsoletes:	util-linux-ng-static
 
-%description static
-Static libraries needed to develop programs using util-linux-ng
-libraries.
+%description -n libblkid-static
+Static library to handle device identification and token extraction.
+
+%package -n libblkid-dietlibc
+Summary:	Static dietlibc library to handle device identification and token extraction
+Group:		Development/Libraries
+Requires:	libblkid-devel = %{version}-%{release}
+
+%description -n libblkid-dietlibc
+libblkid - a library to handle device identification and token extraction
+ - static dietlibc version.
 
 %package initrd
 Summary:	blkid - initrd version
@@ -430,6 +441,8 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_
 %if %{with dietlibc}
 	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
 	LDFLAGS="-lcompat"
+
+mv -f libs/blkid/src/.libs/libblkid.a diet-libblkid.a
 %endif
 
 cp libs/blkid/bin/blkid blkid.initrd
@@ -462,6 +475,7 @@ makeinfo ipc.texi
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{pam.d,rc.d/init.d,sysconfig,security} \
 	$RPM_BUILD_ROOT{/%{_lib},/var/lock}
+%{?with_dietlibc:install -d $RPM_BUILD_ROOT%{dietlibdir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -516,6 +530,8 @@ install blkid.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/blkid
 install findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
 %endif
 
+%{?with_dietlibc:install diet-libblkid.a $RPM_BUILD_ROOT%{dietlibdir}/libblkid.a}
+
 %find_lang %{name}
 
 %clean
@@ -537,8 +553,8 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del blockdev
 fi
 
-%post libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
+%post -n libblkid -p /sbin/ldconfig
+%postun -n libblkid -p /sbin/ldconfig
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
@@ -1106,12 +1122,12 @@ fi
 %lang(es) %{_mandir}/es/man8/agetty.8*
 %lang(ja) %{_mandir}/ja/man8/agetty.8*
 
-%files libs
+%files -n libblkid
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/libblkid.so.*.*
 %attr(755,root,root) %ghost /%{_lib}/libblkid.so.1
 
-%files devel
+%files -n libblkid-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libblkid.so
 %{_libdir}/libblkid.la
@@ -1119,9 +1135,15 @@ fi
 %{_pkgconfigdir}/blkid.pc
 %{_mandir}/man3/libblkid.3*
 
-%files static
+%files -n libblkid-static
 %defattr(644,root,root,755)
 %{_libdir}/libblkid.a
+
+%if %{with dietlibc}
+%files -n libblkid-dietlibc
+%defattr(644,root,root,755)
+%{dietlibdir}/libblkid.a
+%endif
 
 %if %{with initrd}
 %files initrd
