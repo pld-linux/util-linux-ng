@@ -16,7 +16,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.15
-Release:	5
+Release:	6
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
@@ -369,6 +369,7 @@ Library to handle device identification and token extraction.
 Summary:	Library to handle device identification and token extraction - development files.
 Group:		Development/Libraries
 Requires:	libblkid = %{version}-%{release}
+Requires:	libuuid-devel
 Obsoletes:	util-linux-ng-devel
 
 %description -n libblkid-devel
@@ -379,6 +380,7 @@ Library to handle device identification and token extraction
 Summary:	Static library to handle device identification and token extraction
 Group:		Development/Libraries
 Requires:	libblkid-devel = %{version}-%{release}
+Requires:	libuuid-static
 Obsoletes:	util-linux-ng-static
 
 %description -n libblkid-static
@@ -388,6 +390,7 @@ Static library to handle device identification and token extraction.
 Summary:	Static dietlibc library to handle device identification and token extraction
 Group:		Development/Libraries
 Requires:	libblkid-devel = %{version}-%{release}
+Requires:	libuuid-dietlibc
 
 %description -n libblkid-dietlibc
 libblkid - a library to handle device identification and token extraction
