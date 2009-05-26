@@ -16,7 +16,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.15
-Release:	6
+Release:	7
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
@@ -72,6 +72,7 @@ Obsoletes:	sparc32
 Obsoletes:	util-linux
 Obsoletes:	util-linux-suids
 Conflicts:	shadow-extras < 1:4.0.3-6
+Conflicts:	e2fsprogs < 1.41.5
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		debugcflags	-O1 -g
