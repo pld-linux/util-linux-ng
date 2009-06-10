@@ -15,12 +15,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.15
-Release:	7
+Version:	2.15.1
+Release:	1
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
-# Source0-md5:	71919b69eeecbba05612224d8f2c450f
+# Source0-md5:	a06d94c4dc94c56a636c6e456698e40d
 # Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 Source1:	util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
