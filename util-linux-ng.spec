@@ -1,3 +1,5 @@
+# TODO:
+# - move libuuid from e2fsprogs to here
 #
 # Conditional build:
 %bcond_without	initrd		# don't build initrd version
@@ -15,15 +17,14 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.15.1
+Version:	2.16
 Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/%{name}-%{version}.tar.bz2
-# Source0-md5:	a06d94c4dc94c56a636c6e456698e40d
-# Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
-Source1:	util-linux-non-english-man-pages.tar.bz2
-# Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/%{name}-%{version}.tar.bz2
+# Source0-md5:	9623380641b0c2e0449f5b1ecc567663
+Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/util-linux-non-english-man-pages.tar.bz2
+# Source1-md5:	3c940c7e7fe699eaa2ddb1bffb3de2fe
 Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
@@ -435,22 +436,29 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_
 	--disable-login-utils \
 	--disable-schedutils \
 	--disable-wall \
+	--disable-fsck \
 	--without-pam \
 	--without-selinux \
 	--without-audit \
-	--without-ncurses \
-	--with-fsprobe=builtin
+	--without-ncurses
 
-%{__make} -C libs/blkid \
+%{__make} -C shlibs/blkid \
 %if %{with dietlibc}
 	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
 	LDFLAGS="-lcompat"
 
-mv -f libs/blkid/src/.libs/libblkid.a diet-libblkid.a
 %endif
 
-cp libs/blkid/bin/blkid blkid.initrd
-cp libs/blkid/bin/findfs findfs.initrd
+%{__make} -C misc-utils blkid findfs \
+%if %{with dietlibc}
+	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
+	LDFLAGS="-lcompat"
+
+mv -f shlibs/blkid/src/.libs/libblkid.a diet-libblkid.a
+%endif
+
+cp misc-utils/blkid blkid.initrd
+cp misc-utils/findfs findfs.initrd
 %{__make} clean
 %endif
 
@@ -461,14 +469,14 @@ cp libs/blkid/bin/findfs findfs.initrd
 	--with%{!?with_selinux:out}-selinux \
 	--disable-use-tty-group \
 	--disable-wall \
+	--disable-fsck \
 	--enable-kill \
 	--enable-login-chown-vcs \
 	--enable-login-utils \
 	--enable-partx \
 	--enable-rdev \
 	--enable-write \
-	--with-audit \
-	--with-fsprobe=builtin
+	--with-audit
 
 %{__make}
 
@@ -517,9 +525,9 @@ rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
 	$RPM_BUILD_ROOT%{_sbindir}/{vigr,vipw} \
 	$RPM_BUILD_ROOT%{_mandir}/man1/{chfn,chsh,newgrp}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/man8/{vigr,vipw}.8 \
-	$RPM_BUILD_ROOT%{_mandir}/*/man1/{arch,chfn,chsh,clear,last,mesg,newgrp,od,passwd,reset,sg,wall}.1 \
+	$RPM_BUILD_ROOT%{_mandir}/*/man1/{arch,reset}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man5/nfs.5 \
-	$RPM_BUILD_ROOT%{_mandir}/*/man8/{display-services,elvtune,fast*,halt,initctl,need,provide,reboot,setfdprm,shutdown,simpleinit,sln,vigr,vipw,raw}.8
+	$RPM_BUILD_ROOT%{_mandir}/*/man8/{elvtune,setfdprm,sln,raw}.8
 
 %ifnarch %{ix86} %{x8664}
 rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{ramsize,rdev,rootflags,vidmode}.8
@@ -590,6 +598,7 @@ fi
 %attr(755,root,root) /sbin/mkfs
 %attr(755,root,root) /sbin/mkswap
 %attr(755,root,root) /sbin/partx
+%attr(755,root,root) /sbin/switch_root
 %attr(755,root,root) %{_bindir}/cal
 %attr(755,root,root) %{_bindir}/chrt
 %attr(755,root,root) %{_bindir}/col
@@ -708,8 +717,7 @@ fi
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/rtcwake.8*
 %{_mandir}/man8/setarch.8*
-
-%lang(cs) %{_mandir}/cs/man1/write.1*
+%{_mandir}/man8/switch_root.8*
 
 %lang(de) %{_mandir}/de/man1/kill.1*
 %lang(de) %{_mandir}/de/man1/more.1*
@@ -751,7 +759,6 @@ fi
 %lang(fr) %{_mandir}/fr/man1/col.1*
 %lang(fr) %{_mandir}/fr/man1/kill.1*
 %lang(fr) %{_mandir}/fr/man1/more.1*
-%lang(fr) %{_mandir}/fr/man1/rev.1*
 %lang(fr) %{_mandir}/fr/man1/whereis.1*
 %lang(fr) %{_mandir}/fr/man1/write.1*
 
@@ -785,17 +792,8 @@ fi
 
 %lang(id) %{_mandir}/id/man8/fdformat.8*
 
-%lang(it) %{_mandir}/it/man1/cal.1*
 %lang(it) %{_mandir}/it/man1/kill.1*
-%lang(it) %{_mandir}/it/man1/rename.1*
-%lang(it) %{_mandir}/it/man1/rev.1*
 
-%lang(it) %{_mandir}/it/man8/ctrlaltdel.8*
-%lang(it) %{_mandir}/it/man8/dmesg.8*
-%lang(it) %{_mandir}/it/man8/fdformat.8*
-%lang(it) %{_mandir}/it/man8/ipcrm.8*
-%lang(it) %{_mandir}/it/man8/ipcs.8*
-%lang(it) %{_mandir}/it/man8/mkfs.8*
 %lang(it) %{_mandir}/it/man8/mkswap.8*
 %lang(it) %{_mandir}/it/man8/setsid.8*
 
@@ -816,7 +814,6 @@ fi
 %lang(ja) %{_mandir}/ja/man1/namei.1*
 %lang(ja) %{_mandir}/ja/man1/readprofile.1*
 %lang(ja) %{_mandir}/ja/man1/rename.1*
-%lang(ja) %{_mandir}/ja/man1/replay.1*
 %lang(ja) %{_mandir}/ja/man1/rev.1*
 %lang(ja) %{_mandir}/ja/man1/script.1*
 %lang(ja) %{_mandir}/ja/man1/setterm.1*
@@ -1113,7 +1110,6 @@ fi
 %lang(es) %{_mandir}/es/man1/login.1*
 %lang(hu) %{_mandir}/hu/man1/login.1*
 %lang(id) %{_mandir}/id/man1/login.1*
-%lang(it) %{_mandir}/it/man1/login.1*
 %lang(ja) %{_mandir}/ja/man1/login.1*
 %lang(ko) %{_mandir}/ko/man1/login.1*
 %lang(pl) %{_mandir}/pl/man1/login.1*
