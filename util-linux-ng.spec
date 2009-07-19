@@ -1,5 +1,3 @@
-# TODO:
-# - move libuuid from e2fsprogs to here
 #
 # Conditional build:
 %bcond_without	initrd		# don't build initrd version
@@ -18,7 +16,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.16
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/%{name}-%{version}.tar.bz2
@@ -52,7 +50,6 @@ BuildRequires:	uClibc-static >= 2:0.9.29
 	%else
 		%if %{with dietlibc}
 BuildRequires:	dietlibc-static
-BuildRequires:	libuuid-dietlibc
 		%else
 BuildRequires:	glibc-static
 		%endif
@@ -72,8 +69,8 @@ Obsoletes:	setarch
 Obsoletes:	sparc32
 Obsoletes:	util-linux
 Obsoletes:	util-linux-suids
+Conflicts:	e2fsprogs < 1.41.8-3
 Conflicts:	shadow-extras < 1:4.0.3-6
-Conflicts:	e2fsprogs < 1.41.5
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		debugcflags	-O1 -g
@@ -368,7 +365,7 @@ Obsoletes:	util-linux-ng-libs
 Library to handle device identification and token extraction.
 
 %package -n libblkid-devel
-Summary:	Library to handle device identification and token extraction - development files.
+Summary:	Library to handle device identification and token extraction - development files
 Group:		Development/Libraries
 Requires:	libblkid = %{version}-%{release}
 Requires:	libuuid-devel
@@ -395,8 +392,94 @@ Requires:	libblkid-devel = %{version}-%{release}
 Requires:	libuuid-dietlibc
 
 %description -n libblkid-dietlibc
-libblkid - a library to handle device identification and token extraction
+libblkid - a library to handle device identification and token
+extraction
  - static dietlibc version.
+
+%package -n libuuid
+Summary:	Library for accessing and manipulating UUID
+Summary(pl.UTF-8):	Biblioteka umożliwiająca dostęp i zmiany UUID
+License:	BSD
+Group:		Libraries
+Conflicts:	e2fsprogs < 1.34-3
+
+%description -n libuuid
+Library for accessing and manipulating UUID.
+
+%description -n libuuid -l pl.UTF-8
+Biblioteka umożliwiająca dostęp i zmiany UUID.
+
+%package -n libuuid-devel
+Summary:	Header files for library for accessing and manipulating UUID
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki umożliwiającej dostęp i zmiany UUID
+License:	BSD
+Group:		Development/Libraries
+Requires:	libuuid = %{version}-%{release}
+Conflicts:	e2fsprogs-devel < 1.34-3
+
+%description -n libuuid-devel
+Library for accessing and manipulating UUID - development files.
+
+%description -n libuuid-devel -l pl.UTF-8
+Biblioteka umożliwiająca dostęp i zmiany UUID - pliki dla
+programistów.
+
+%package -n libuuid-static
+Summary:	Static library for accessing and manipulating UUID
+Summary(pl.UTF-8):	Statyczna biblioteka umożliwiająca dostęp i zmiany UUID
+License:	BSD
+Group:		Development/Libraries
+Requires:	libuuid-devel = %{version}-%{release}
+Conflicts:	e2fsprogs-static < 1.34-3
+
+%description -n libuuid-static
+Library for accessing and manipulating UUID - static version.
+
+%description -n libuuid-static -l pl.UTF-8
+Biblioteka umożliwiająca dostęp i zmiany UUID - wersja statyczna.
+
+%package -n libuuid-dietlibc
+Summary:	Static dietlibc library for accessing and manipulating UUID
+Summary(pl.UTF-8):	Statyczna biblioteka dietlibc umożliwiająca dostęp i zmiany UUID
+License:	BSD
+Group:		Development/Libraries
+Requires:	libuuid-devel = %{version}-%{release}
+Conflicts:	e2fsprogs-static < 1.34-3
+
+%description -n libuuid-dietlibc
+Library for accessing and manipulating UUID - static dietlibc version.
+
+%description -n libuuid-dietlibc -l pl.UTF-8
+Biblioteka umożliwiająca dostęp i zmiany UUID - wersja statyczna
+dietlibc.
+
+%package -n uuidd
+Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
+Summary(pl.UTF-8):	Pomocniczy demon gwarantujący unikalność UUID-ów opartych na czasie
+License:	GPL v2
+Group:		Daemons
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
+Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/groupmod
+Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/usermod
+Requires:	libuuid = %{version}-%{release}
+Provides:	group(uuidd)
+Provides:	user(uuidd)
+Conflicts:	libuuid < 1.40.5-0.1
+
+%description -n uuidd
+The uuidd package contains a userspace daemon (uuidd) which guarantees
+uniqueness of time-based UUID generation even at very high rates on
+SMP systems.
+
+%description -n uuidd -l pl.UTF-8
+Ten pakiet zawiera działającego w przestrzeni użytkownika demona
+(uuidd) gwarantującego unikalność generowania UUID-ów opartych na
+czasie nawet przy bardzo dużej częstotliwości na systemach SMP.
 
 %package initrd
 Summary:	blkid - initrd version
@@ -442,12 +525,14 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_
 	--without-audit \
 	--without-ncurses
 
-%{__make} -C shlibs/blkid \
-%if %{with dietlibc}
-	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
-	LDFLAGS="-lcompat"
+for lib in shlibs/blkid shlibs/uuid; do
+	%{__make} -C $lib \
+	%if %{with dietlibc}
+		CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
+		LDFLAGS="-lcompat"
 
-%endif
+	%endif
+done
 
 %{__make} -C misc-utils blkid findfs \
 %if %{with dietlibc}
@@ -455,6 +540,7 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_
 	LDFLAGS="-lcompat"
 
 mv -f shlibs/blkid/src/.libs/libblkid.a diet-libblkid.a
+mv -f shlibs/uuid/src/.libs/libuuid.a diet-libuuid.a
 %endif
 
 cp misc-utils/blkid blkid.initrd
@@ -486,7 +572,7 @@ makeinfo ipc.texi
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{pam.d,rc.d/init.d,sysconfig,security} \
-	$RPM_BUILD_ROOT{/%{_lib},/var/lock}
+	$RPM_BUILD_ROOT{/%{_lib},/var/{lock,lib/libuuid}}
 %{?with_dietlibc:install -d $RPM_BUILD_ROOT%{dietlibdir}}
 
 %{__make} install \
@@ -504,9 +590,11 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 :> $RPM_BUILD_ROOT/var/lock/wtmpxlock
 :> $RPM_BUILD_ROOT%{_sysconfdir}/blkid.tab
 
-mv $RPM_BUILD_ROOT%{_libdir}/libblkid.so.* $RPM_BUILD_ROOT/%{_lib}
-ln -sf /%{_lib}/$(basename $RPM_BUILD_ROOT/%{_lib}/libblkid.so.*.*.*) \
-	 $RPM_BUILD_ROOT%{_libdir}/libblkid.so
+for lib in blkid uuid; do
+	mv $RPM_BUILD_ROOT%{_libdir}/lib${lib}.so.* $RPM_BUILD_ROOT/%{_lib}
+	ln -sf /%{_lib}/$(basename $RPM_BUILD_ROOT/%{_lib}/lib${lib}.so.*.*.*) \
+		 $RPM_BUILD_ROOT%{_libdir}/lib${lib}.so
+done
 
 ln -sf hwclock $RPM_BUILD_ROOT/sbin/clock
 echo '.so hwclock.8' > $RPM_BUILD_ROOT%{_mandir}/man8/clock.8
@@ -542,7 +630,10 @@ install blkid.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/blkid
 install findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
 %endif
 
-%{?with_dietlibc:install diet-libblkid.a $RPM_BUILD_ROOT%{dietlibdir}/libblkid.a}
+%if %{with dietlibc}
+install diet-libblkid.a $RPM_BUILD_ROOT%{dietlibdir}/libblkid.a
+install diet-libuuid.a $RPM_BUILD_ROOT%{dietlibdir}/libuuid.a
+%endif
 
 %find_lang %{name}
 
@@ -567,6 +658,26 @@ fi
 
 %post -n libblkid -p /sbin/ldconfig
 %postun -n libblkid -p /sbin/ldconfig
+
+%post   -n libuuid -p /sbin/ldconfig
+%postun -n libuuid -p /sbin/ldconfig
+
+%pre    -n uuidd
+if [ "$(getgid libuuid 2>/dev/null)" = "222" ]; then
+        /usr/sbin/groupmod -n uuidd libuuid
+fi
+%groupadd -g 222 uuidd
+if [ "$(id -u libuuid 2>/dev/null)" = "222" ]; then
+        /usr/sbin/usermod -l uuidd libuuid
+fi
+%useradd -u 222 -r -d /var/lib/libuuid -s /bin/false -c "UUID generator helper daemon" -g uuidd uuidd
+
+%postun -n uuidd
+if [ "$1" = "0" ]; then
+        %userremove uuidd
+        %groupremove uuidd
+fi
+
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
@@ -1144,6 +1255,37 @@ fi
 %defattr(644,root,root,755)
 %{dietlibdir}/libblkid.a
 %endif
+
+%files -n libuuid
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/uuidgen
+%attr(755,root,root) /%{_lib}/libuuid.so.*.*
+%attr(755,root,root) %ghost /%{_lib}/libuuid.so.1
+%{_mandir}/man1/uuidgen.1*
+
+%files -n libuuid-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libuuid.so
+%{_libdir}/libuuid.la
+%{_includedir}/uuid
+%{_pkgconfigdir}/uuid.pc
+%{_mandir}/man3/uuid*.3*
+
+%files -n libuuid-static
+%defattr(644,root,root,755)
+%{_libdir}/libuuid.a
+
+%if %{with dietlibc}
+%files -n libuuid-dietlibc
+%defattr(644,root,root,755)
+%{dietlibdir}/libuuid.a
+%endif
+
+%files -n uuidd
+%defattr(644,root,root,755)
+%attr(6755,uuidd,uuidd) %{_sbindir}/uuidd
+%attr(2775,uuidd,uuidd) /var/lib/libuuid
+%{_mandir}/man8/uuidd.8*
 
 %if %{with initrd}
 %files initrd
