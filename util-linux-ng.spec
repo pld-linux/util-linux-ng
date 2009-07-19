@@ -16,7 +16,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.16
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/%{name}-%{version}.tar.bz2
@@ -69,7 +69,7 @@ Obsoletes:	setarch
 Obsoletes:	sparc32
 Obsoletes:	util-linux
 Obsoletes:	util-linux-suids
-Conflicts:	e2fsprogs < 1.41.8-3
+Conflicts:	e2fsprogs < 1.41.8-5
 Conflicts:	shadow-extras < 1:4.0.3-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -481,6 +481,17 @@ Ten pakiet zawiera działającego w przestrzeni użytkownika demona
 (uuidd) gwarantującego unikalność generowania UUID-ów opartych na
 czasie nawet przy bardzo dużej częstotliwości na systemach SMP.
 
+%package -n fsck
+Summary:	Check and repair a Linux file system
+Summary(pl.UTF-8):	Sprawdzenie i naprawa linuksowego systemu plików
+Group:		Applications/System
+
+%description -n fsck
+Check and repair a Linux file system.
+
+%description -n fsck -l pl.UTF-8
+Sprawdzenie i naprawa linuksowego systemu plików.
+
 %package initrd
 Summary:	blkid - initrd version
 Summary(pl.UTF-8):	blkid - wersja dla initrd
@@ -534,6 +545,12 @@ for lib in shlibs/blkid shlibs/uuid; do
 	%endif
 done
 
+%{__make} -C fsck \
+%if %{with dietlibc}
+	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
+	LDFLAGS="-lcompat"
+%endif
+
 %{__make} -C misc-utils blkid findfs \
 %if %{with dietlibc}
 	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
@@ -545,6 +562,7 @@ mv -f shlibs/uuid/src/.libs/libuuid.a diet-libuuid.a
 
 cp misc-utils/blkid blkid.initrd
 cp misc-utils/findfs findfs.initrd
+cp fsck/fsck fsck.initrd
 %{__make} clean
 %endif
 
@@ -555,7 +573,6 @@ cp misc-utils/findfs findfs.initrd
 	--with%{!?with_selinux:out}-selinux \
 	--disable-use-tty-group \
 	--disable-wall \
-	--disable-fsck \
 	--enable-kill \
 	--enable-login-chown-vcs \
 	--enable-login-utils \
@@ -628,6 +645,8 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{cfdisk,sfdisk}.8
 install -d $RPM_BUILD_ROOT%{_libdir}/initrd
 install blkid.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/blkid
 install findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
+install fsck.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/fsck
+ln -s fsck $RPM_BUILD_ROOT%{_libdir}/initrd/e2fsck
 %endif
 
 %if %{with dietlibc}
@@ -1287,9 +1306,16 @@ fi
 %attr(2775,uuidd,uuidd) /var/lib/libuuid
 %{_mandir}/man8/uuidd.8*
 
+%files -n fsck
+%defattr(644,root,root,755)
+%attr(755,root,root) /sbin/fsck
+%{_mandir}/man8/fsck.8*
+
 %if %{with initrd}
 %files initrd
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/initrd/blkid
 %attr(755,root,root) %{_libdir}/initrd/findfs
+%attr(755,root,root) %{_libdir}/initrd/fsck
+%attr(755,root,root) %{_libdir}/initrd/e2fsck
 %endif
