@@ -16,7 +16,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.16
-Release:	3
+Release:	4
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/%{name}-%{version}.tar.bz2
@@ -78,6 +78,11 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # for some reason known only to rpm there must be "\\|" not "\|" here
 %define		dietarch	%(echo %{_target_cpu} | sed -e 's/i.86\\|pentium.\\|athlon/i386/;s/amd64/x86_64/;s/armv.*/arm/')
 %define		dietlibdir	%{_prefix}/lib/dietlibc/lib-%{dietarch}
+
+%ifarch ppc ppc64
+# for dietlibc
+%define		filterout_ld	-Wl,-z,relro
+%endif
 
 %description
 util-linux contains a large variety of low-level system utilities
