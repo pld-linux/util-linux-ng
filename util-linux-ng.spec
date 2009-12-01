@@ -40,6 +40,7 @@ BuildRequires:	intltool
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	pam-devel >= 0.99.7.1
+BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.470
 BuildRequires:	sed >= 4.0
 BuildRequires:	texinfo
