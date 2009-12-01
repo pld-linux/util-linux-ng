@@ -15,12 +15,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.16.1
+Version:	2.16.2
 Release:	1
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/%{name}-%{version}.tar.bz2
-# Source0-md5:	8997a0a6ebf38159fa962a3b8d290f6e
+# Source0-md5:	edd1f7a82fd388cc0e1e3d2d1e7ea55a
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	3c940c7e7fe699eaa2ddb1bffb3de2fe
 Source2:	login.pamd
