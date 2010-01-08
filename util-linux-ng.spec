@@ -15,12 +15,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.16.2
+Version:	2.17
 Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/%{name}-%{version}.tar.bz2
-# Source0-md5:	edd1f7a82fd388cc0e1e3d2d1e7ea55a
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/%{name}-%{version}.tar.bz2
+# Source0-md5:	11cc8a0138019e7060dd275d47dbc096
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	3c940c7e7fe699eaa2ddb1bffb3de2fe
 Source2:	login.pamd
@@ -735,6 +735,7 @@ fi
 %attr(755,root,root) /sbin/mkswap
 %attr(755,root,root) /sbin/partx
 %attr(755,root,root) /sbin/switch_root
+%attr(755,root,root) /sbin/wipefs
 %attr(755,root,root) %{_bindir}/cal
 %attr(755,root,root) %{_bindir}/chrt
 %attr(755,root,root) %{_bindir}/col
@@ -743,6 +744,7 @@ fi
 %attr(755,root,root) %{_bindir}/column
 %attr(755,root,root) %{_bindir}/ddate
 %attr(755,root,root) %{_bindir}/flock
+%attr(755,root,root) %{_bindir}/fallocate
 %attr(755,root,root) %{_bindir}/getopt
 %attr(755,root,root) %{_bindir}/hexdump
 %attr(755,root,root) %{_bindir}/ionice
@@ -797,6 +799,7 @@ fi
 %attr(755,root,root) %{_bindir}/tailf
 %attr(755,root,root) %{_bindir}/taskset
 %attr(755,root,root) %{_bindir}/ul
+%attr(755,root,root) %{_bindir}/unshare
 %attr(755,root,root) %{_bindir}/whereis
 %attr(2755,root,tty) %{_bindir}/write
 %attr(755,root,root) %{_sbindir}/fdformat
@@ -812,6 +815,7 @@ fi
 %{_mandir}/man1/column.1*
 %{_mandir}/man1/ddate.1*
 %{_mandir}/man1/dmesg.1*
+%{_mandir}/man1/fallocate.1*
 %{_mandir}/man1/flock.1*
 %{_mandir}/man1/getopt.1*
 %{_mandir}/man1/hexdump.1*
@@ -839,6 +843,7 @@ fi
 %{_mandir}/man1/tailf.1*
 %{_mandir}/man1/taskset.1*
 %{_mandir}/man1/ul.1*
+%{_mandir}/man1/unshare.1*
 %{_mandir}/man1/whereis.1*
 %{_mandir}/man1/write.1*
 
@@ -854,6 +859,7 @@ fi
 %{_mandir}/man8/rtcwake.8*
 %{_mandir}/man8/setarch.8*
 %{_mandir}/man8/switch_root.8*
+%{_mandir}/man8/wipefs.8*
 
 %lang(de) %{_mandir}/de/man1/kill.1*
 %lang(de) %{_mandir}/de/man1/more.1*

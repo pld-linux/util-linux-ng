@@ -31,10 +31,10 @@ index 9cbc466..9bf766b 100644
    { "bind",	0, 0, MS_BIND   },	/* Remount part of tree elsewhere */
    { "rbind",	0, 0, MS_BIND|MS_REC }, /* Idem, plus mounted subtrees */
 @@ -1638,6 +1639,7 @@ static struct option longopts[] = {
- 	{ "make-rslave", 0, 0, 141 },
  	{ "make-rprivate", 0, 0, 142 },
  	{ "make-runbindable", 0, 0, 143 },
-+	{ "union", 0, 0, 144 },
+ 	{ "no-canonicalize", 0, 0, 144 },
++	{ "union", 0, 0, 145 },
  	{ "internal-only", 0, 0, 'i' },
  	{ NULL, 0, 0, 0 }
  };
@@ -42,7 +42,7 @@ index 9cbc466..9bf766b 100644
  		case 143:
  			mounttype = (MS_UNBINDABLE | MS_REC);
  			break;
-+		case 144: /* union */
++		case 145: /* union */
 +			mounttype = MS_UNION;
 +			break;
  
