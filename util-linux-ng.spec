@@ -632,9 +632,9 @@ for d in cs de es fi fr hu id it ja ko nl pl ; do
 done
 
 # cleanup, remove files not included in package
-rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp,sg} \
+rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
 	$RPM_BUILD_ROOT%{_sbindir}/{vigr,vipw} \
-	$RPM_BUILD_ROOT%{_mandir}/man1/{chfn,chsh,newgrp,sg}.1 \
+	$RPM_BUILD_ROOT%{_mandir}/man1/{chfn,chsh,newgrp}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man1/{chfn,chsh,newgrp,sg}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/man8/{vigr,vipw}.8 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man8/{vigr,vipw}.8 \
