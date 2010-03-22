@@ -15,14 +15,14 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.17.1
+Version:	2.17.2
 Release:	1
 License:	GPL
 Group:		Applications/System
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/%{name}-%{version}.tar.bz2
-# Source0-md5:	1771802e8f4c795f72f06efb1fc61587
+# Source0-md5:	4635725a3eef1c57090bac8ea5e082e6
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/util-linux-non-english-man-pages.tar.bz2
-# Source1-md5:	81bbcc9a820512ecde87a8f31de0b745
+# Source1-md5:	3c940c7e7fe699eaa2ddb1bffb3de2fe
 Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
@@ -635,9 +635,7 @@ done
 rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
 	$RPM_BUILD_ROOT%{_sbindir}/{vigr,vipw} \
 	$RPM_BUILD_ROOT%{_mandir}/man1/{chfn,chsh,newgrp}.1 \
-	$RPM_BUILD_ROOT%{_mandir}/*/man1/{chfn,chsh,newgrp,sg}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/man8/{vigr,vipw}.8 \
-	$RPM_BUILD_ROOT%{_mandir}/*/man8/{vigr,vipw}.8 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man1/{arch,reset}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man5/nfs.5 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man8/{elvtune,setfdprm,sln,raw}.8
@@ -864,8 +862,6 @@ fi
 %{_mandir}/man8/wipefs.8*
 
 
-%lang(cs) %{_mandir}/cs/man1/write.1*
-
 %lang(de) %{_mandir}/de/man1/kill.1*
 %lang(de) %{_mandir}/de/man1/more.1*
 %lang(de) %{_mandir}/de/man1/write.1*
@@ -953,7 +949,6 @@ fi
 %lang(ja) %{_mandir}/ja/man1/getopt.1*
 %lang(ja) %{_mandir}/ja/man1/hexdump.1*
 %lang(ja) %{_mandir}/ja/man1/kill.1*
-%lang(ja) %{_mandir}/ja/man1/last.1*
 %lang(ja) %{_mandir}/ja/man1/line.1*
 %lang(ja) %{_mandir}/ja/man1/logger.1*
 %lang(ja) %{_mandir}/ja/man1/login.1*
@@ -961,38 +956,25 @@ fi
 %lang(ja) %{_mandir}/ja/man1/mcookie.1*
 %lang(ja) %{_mandir}/ja/man1/more.1*
 %lang(ja) %{_mandir}/ja/man1/namei.1*
-%lang(ja) %{_mandir}/ja/man1/passwd.1*
 %lang(ja) %{_mandir}/ja/man1/readprofile.1*
 %lang(ja) %{_mandir}/ja/man1/rename.1*
-%lang(ja) %{_mandir}/ja/man1/replay.1*
 %lang(ja) %{_mandir}/ja/man1/rev.1*
 %lang(ja) %{_mandir}/ja/man1/script.1*
 %lang(ja) %{_mandir}/ja/man1/setterm.1*
 %lang(ja) %{_mandir}/ja/man1/ul.1*
-%lang(ja) %{_mandir}/ja/man1/wall.1*
 %lang(ja) %{_mandir}/ja/man1/whereis.1*
 %lang(ja) %{_mandir}/ja/man1/write.1*
 
 %lang(ja) %{_mandir}/ja/man8/ctrlaltdel.8*
 %lang(ja) %{_mandir}/ja/man8/cytune.8*
-%lang(ja) %{_mandir}/ja/man8/display-services.8*
 %lang(ja) %{_mandir}/ja/man8/dmesg.8*
-%lang(ja) %{_mandir}/ja/man8/fastboot.8*
-%lang(ja) %{_mandir}/ja/man8/fasthalt.8*
 %lang(ja) %{_mandir}/ja/man8/fdformat.8*
-%lang(ja) %{_mandir}/ja/man8/halt.8*
-%lang(ja) %{_mandir}/ja/man8/initctl.8*
 %lang(ja) %{_mandir}/ja/man8/ipcrm.8*
 %lang(ja) %{_mandir}/ja/man8/ipcs.8*
 %lang(ja) %{_mandir}/ja/man8/isosize.8*
 %lang(ja) %{_mandir}/ja/man8/mkswap.8*
-%lang(ja) %{_mandir}/ja/man8/need.8*
-%lang(ja) %{_mandir}/ja/man8/provide.8*
-%lang(ja) %{_mandir}/ja/man8/reboot.8*
 %lang(ja) %{_mandir}/ja/man8/renice.8*
 %lang(ja) %{_mandir}/ja/man8/setsid.8*
-%lang(ja) %{_mandir}/ja/man8/shutdown.8*
-%lang(ja) %{_mandir}/ja/man8/simpleinit.8*
 
 %lang(ko) %{_mandir}/ko/man1/cal.1*
 %lang(ko) %{_mandir}/ko/man1/col.1*
