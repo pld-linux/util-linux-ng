@@ -3,7 +3,8 @@
 %bcond_without	initrd		# don't build initrd version
 %bcond_with	uClibc		# link initrd version with static glibc instead of uClibc
 %bcond_without	dietlibc	# link initrd version with dietlibc instead of uClibc
-%bcond_without	selinux 	# build without SELinux support
+%bcond_without	selinux 	# SELinux support
+%bcond_without	fallocate	# fallocate utility (needs glibc 2.11 to compile)
 #
 Summary:	Collection of basic system utilities for Linux
 Summary(de.UTF-8):	Sammlung von grundlegenden Systemdienstprogrammen für Linux
@@ -34,6 +35,7 @@ BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
+%{?with_fallocate:BuildRequires:	glibc-devel >= 6:2.11}
 BuildRequires:	intltool
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_selinux:BuildRequires:	libsepol-devel}
@@ -532,15 +534,16 @@ CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_
 	%{?with_dietlibc:CC="diet %{__cc}"} \
 	--disable-shared \
 	--enable-static \
-	--disable-use-tty-group \
+	--disable-fsck \
 	--disable-login-utils \
 	--disable-schedutils \
+	--disable-silent-rules \
+	--disable-use-tty-group \
 	--disable-wall \
-	--disable-fsck \
-	--without-pam \
-	--without-selinux \
 	--without-audit \
-	--without-ncurses
+	--without-ncurses \
+	--without-pam \
+	--without-selinux
 
 for lib in shlibs/blkid shlibs/uuid; do
 	%{__make} -C $lib \
@@ -575,8 +578,8 @@ cp fsck/fsck fsck.initrd
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
-	--with-pam \
-	--with%{!?with_selinux:out}-selinux \
+	%{!?with_fallocate:--disable-fallocate} \
+	--disable-silent-rules \
 	--disable-use-tty-group \
 	--disable-wall \
 	--enable-kill \
@@ -585,7 +588,9 @@ cp fsck/fsck fsck.initrd
 	--enable-partx \
 	--enable-rdev \
 	--enable-write \
-	--with-audit
+	--with-audit \
+	--with-pam \
+	--with%{!?with_selinux:out}-selinux
 
 %{__make}
 
@@ -744,7 +749,7 @@ fi
 %attr(755,root,root) %{_bindir}/column
 %attr(755,root,root) %{_bindir}/ddate
 %attr(755,root,root) %{_bindir}/flock
-%attr(755,root,root) %{_bindir}/fallocate
+%{?with_fallocate:%attr(755,root,root) %{_bindir}/fallocate}
 %attr(755,root,root) %{_bindir}/getopt
 %attr(755,root,root) %{_bindir}/hexdump
 %attr(755,root,root) %{_bindir}/ionice
@@ -815,7 +820,7 @@ fi
 %{_mandir}/man1/column.1*
 %{_mandir}/man1/ddate.1*
 %{_mandir}/man1/dmesg.1*
-%{_mandir}/man1/fallocate.1*
+%{?with_fallocate:%{_mandir}/man1/fallocate.1*}
 %{_mandir}/man1/flock.1*
 %{_mandir}/man1/getopt.1*
 %{_mandir}/man1/hexdump.1*
