@@ -103,7 +103,7 @@ Linux-System erforderlich sind. Dazu gehören Konfigurationstools wie
 util-linux contiene una gran variedad de utilitarios de sistema de
 bajo nivel necesarios a un sistema Linux funcional. Esto incluye,
 entre otras cosas, herramientas de configuración como fdisk y
-programas de sistema como login.
+programas de sistema como logger.
 
 %description -l fr.UTF-8
 util-linux contient une grande variété d'utilitaire système bas niveau
@@ -121,13 +121,13 @@ programy systemowe, takie jak logger.
 util-linux contém uma grande variedade de utilitários de sistema de
 baixo-nível necessários para um sistema Linux funcional. Isso inclui,
 entre outras coisas, ferramentas de configuração como fdisk e
-programas de sistema como login.
+programas de sistema como logger.
 
 %description -l ru.UTF-8
 Этот пакет содержит большой набор системных утилит низкого уровня,
 которые необходимы для функционирования системы Linux. Он включает, в
 числе прочих, инструменты конфигурации, такие как fdisk, и системные
-программы, такие как login.
+программы, такие как logger.
 
 %description -l tr.UTF-8
 şlevsel durumdaki bir Linux sistemi için gerekli birçok alt düzey
@@ -138,7 +138,7 @@ uygulamaları ve logger gibi sistem programları sayılabilir.
 Цей пакет містить великий набір системних утиліт низького рівня, які
 необхідні для функціонування системи Linux. Він містить, окрім інших,
 конфігураційні інструменти (такі як fdisk) та системні програми (такі
-як login).
+як logger).
 
 %package -n blockdev
 Summary:	Support for blockdev
@@ -366,25 +366,33 @@ agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 
 %package -n libblkid
 Summary:	Library to handle device identification and token extraction
+Summary(pl.UTF-8):	Biblioteka do obsługi identyfikacji urządzeń
 Group:		Libraries
 Obsoletes:	util-linux-ng-libs
 
 %description -n libblkid
 Library to handle device identification and token extraction.
 
+%description -n libblkid -l pl.UTF-8
+Biblioteka do obsługi identyfikacji urządzeń i wydobywania tokenów.
+
 %package -n libblkid-devel
-Summary:	Library to handle device identification and token extraction - development files
+Summary:	Header files for blkid library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki blkid
 Group:		Development/Libraries
 Requires:	libblkid = %{version}-%{release}
 Requires:	libuuid-devel
 Obsoletes:	util-linux-ng-devel
 
 %description -n libblkid-devel
-Library to handle device identification and token extraction
- - development files.
+Header files for blkid library.
+
+%description -n libblkid-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki blkid.
 
 %package -n libblkid-static
 Summary:	Static library to handle device identification and token extraction
+Summary(pl.UTF-8):	Statyczna biblioteka do obsługi identyfikacji urządzeń
 Group:		Development/Libraries
 Requires:	libblkid-devel = %{version}-%{release}
 Requires:	libuuid-static
@@ -393,16 +401,24 @@ Obsoletes:	util-linux-ng-static
 %description -n libblkid-static
 Static library to handle device identification and token extraction.
 
+%description -n libblkid-static -l pl.UTF-8
+Statyczna biblioteka do obsługi identyfikacji urządzeń i wydobywania
+tokenów.
+
 %package -n libblkid-dietlibc
 Summary:	Static dietlibc library to handle device identification and token extraction
+Summary(pl.UTF-8):	Statyczna biblioteka dietlibc do obsługi identyfikacji urządzeń
 Group:		Development/Libraries
 Requires:	libblkid-devel = %{version}-%{release}
 Requires:	libuuid-dietlibc
 
 %description -n libblkid-dietlibc
-libblkid - a library to handle device identification and token
-extraction
- - static dietlibc version.
+Library to handle device identification and token extraction - static
+dietlibc version.
+
+%description -n libblkid-dietlibc -l pl.UTF-8
+Biblioteka do obsługi identyfikacji urządzeń i wydobywania tokenów -
+wersja statyczna dla dietlibc.
 
 %package -n libuuid
 Summary:	Library for accessing and manipulating UUID
@@ -458,7 +474,7 @@ Conflicts:	e2fsprogs-static < 1.34-3
 Library for accessing and manipulating UUID - static dietlibc version.
 
 %description -n libuuid-dietlibc -l pl.UTF-8
-Biblioteka umożliwiająca dostęp i zmiany UUID - wersja statyczna
+Biblioteka umożliwiająca dostęp i zmiany UUID - wersja statyczna dla
 dietlibc.
 
 %package -n uuidd
@@ -491,14 +507,14 @@ czasie nawet przy bardzo dużej częstotliwości na systemach SMP.
 
 %package -n fsck
 Summary:	Check and repair a Linux file system
-Summary(pl.UTF-8):	Sprawdzenie i naprawa linuksowego systemu plików
+Summary(pl.UTF-8):	Sprawdzanie i naprawa linuksowego systemu plików
 Group:		Applications/System
 
 %description -n fsck
 Check and repair a Linux file system.
 
 %description -n fsck -l pl.UTF-8
-Sprawdzenie i naprawa linuksowego systemu plików.
+Sprawdzanie i naprawa linuksowego systemu plików.
 
 %package initrd
 Summary:	blkid - initrd version
