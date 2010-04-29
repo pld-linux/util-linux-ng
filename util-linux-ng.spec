@@ -235,8 +235,6 @@ Summary(ru.UTF-8):	Программы для монтирования и раз�
 Summary(tr.UTF-8):	Dosya sistemlerini bağlamak ve çözmek için programlar
 Summary(uk.UTF-8):	Програми для монтування та розмонтування файлових систем
 Group:		Applications/System
-Requires:	libgcrypt >= 1.2.0-6
-Requires:	libgpg-error >= 1.0-4
 Conflicts:	nfs-utils-common < 1.1.3-3
 
 %description -n mount
