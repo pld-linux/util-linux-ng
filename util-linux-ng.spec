@@ -554,9 +554,10 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 %{__automake}
 CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_LLSEEK_PROTOTYPE"; export CPPFLAGS
 %if %{with initrd}
+%{?with_uClibc:xCC="%{_target_cpu}-uclibc-gcc"}
+%{?with_dietlibc:xCC="diet %{__cc}"; xCC=${xCC#*ccache }}
 %configure \
-	%{?with_uClibc:CC="%{_target_cpu}-uclibc-gcc"} \
-	%{?with_dietlibc:CC="diet %{__cc}"} \
+	CC="$xCC" \
 	--disable-shared \
 	--enable-static \
 	--disable-fsck \
@@ -575,7 +576,6 @@ for lib in shlibs/blkid shlibs/uuid; do
 	%if %{with dietlibc}
 		CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
 		LDFLAGS="-lcompat"
-
 	%endif
 done
 
