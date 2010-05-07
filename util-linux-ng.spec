@@ -1,11 +1,21 @@
 #
 # Conditional build:
 %bcond_without	initrd		# don't build initrd version
-%bcond_with	uClibc		# link initrd version with static glibc instead of uClibc
+%bcond_with		uClibc		# link initrd version with static glibc instead of uClibc
 %bcond_without	dietlibc	# link initrd version with dietlibc instead of uClibc
 %bcond_without	selinux 	# SELinux support
+%if "%{pld_release}" == "ac"
+%bcond_with		fallocate	# fallocate utility (needs glibc 2.11 to compile)
+%else
 %bcond_without	fallocate	# fallocate utility (needs glibc 2.11 to compile)
-#
+%endif
+
+%if "%{pld_release}" == "ac"
+%define		pam_ver 0.79.0
+%else
+%define		pam_ver 0.99.7.1
+%endif
+
 Summary:	Collection of basic system utilities for Linux
 Summary(de.UTF-8):	Sammlung von grundlegenden Systemdienstprogrammen für Linux
 Summary(es.UTF-8):	Colectánea de utilitarios básicos de sistema para Linux
@@ -41,8 +51,9 @@ BuildRequires:	intltool
 %{?with_selinux:BuildRequires:	libsepol-devel}
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	pam-devel >= 0.99.7.1
+BuildRequires:	pam-devel >= %{pam_ver}
 BuildRequires:	pkgconfig
+BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.470
 BuildRequires:	sed >= 4.0
 BuildRequires:	texinfo
@@ -58,7 +69,7 @@ BuildRequires:	glibc-static
 		%endif
 	%endif
 %endif
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= %{pam_ver}
 Provides:	fdisk
 Provides:	linux32
 Provides:	sparc32
@@ -337,7 +348,7 @@ Paralel bağlantı noktası sürücüsünü ayarlar.
 Summary:	login is used when signing onto a system
 Summary(pl.UTF-8):	login jest używany do rozpoczęcia pracy w systemie
 Group:		Applications/System
-Requires:	pam >= 0.99.7.1
+Requires:	pam >= %{pam_ver}
 Obsoletes:	heimdal-login
 
 %description -n login
