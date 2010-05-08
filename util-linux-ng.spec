@@ -42,14 +42,12 @@ Patch1:		%{name}-ac.patch
 Patch2:		%{name}-union-mount.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
-BuildRequires:	autoconf
-BuildRequires:	automake
 BuildRequires:	gettext-devel
 %{?with_fallocate:BuildRequires:	glibc-devel >= 6:2.11}
-BuildRequires:	intltool
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_selinux:BuildRequires:	libsepol-devel}
 BuildRequires:	libtool
+BuildRequires:	linux-libc-headers >= 7:2.6.27
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	pam-devel >= %{pam_ver}
 BuildRequires:	pkgconfig
@@ -546,13 +544,7 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 %patch2 -p1
 
 %build
-%{__libtoolize}
-%{__gettextize}
-%{__aclocal} -I m4
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_LLSEEK_PROTOTYPE"; export CPPFLAGS
+export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_LLSEEK_PROTOTYPE"
 %if %{with initrd}
 %{?with_uClibc:xCC="%{_target_cpu}-uclibc-gcc"}
 %{?with_dietlibc:xCC="diet %{__cc}"; xCC=${xCC#*ccache }}
@@ -635,9 +627,9 @@ sed -i -e 's,/usr/spool/mail,/var/mail,g' $RPM_BUILD_ROOT%{_mandir}/man1/login.1
 
 mv $RPM_BUILD_ROOT%{_sbindir}/{addpart,delpart,partx} $RPM_BUILD_ROOT/sbin
 
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/login
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/blockdev
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
+cp -a  %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/login
+install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/blockdev
+cp -a %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 
 :> $RPM_BUILD_ROOT/etc/security/blacklist.login
 :> $RPM_BUILD_ROOT/var/lock/wtmpxlock
@@ -656,7 +648,7 @@ for d in cs de es fi fr hu id it ja ko nl pl ; do
 	for m in man1 man5 man8 ; do
 		if [ -d man/$d/$m ]; then
 			install -d $RPM_BUILD_ROOT%{_mandir}/$d/$m
-			install man/$d/$m/* $RPM_BUILD_ROOT%{_mandir}/$d/$m
+			cp -a man/$d/$m/* $RPM_BUILD_ROOT%{_mandir}/$d/$m
 		fi
 	done
 done
@@ -679,18 +671,20 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{cfdisk,sfdisk}.8
 
 %if %{with initrd}
 install -d $RPM_BUILD_ROOT%{_libdir}/initrd
-install blkid.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/blkid
-install findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
-install fsck.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/fsck
+install -p blkid.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/blkid
+install -p findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
+install -p fsck.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/fsck
 ln -s fsck $RPM_BUILD_ROOT%{_libdir}/initrd/e2fsck
-%endif
 
 %if %{with dietlibc}
-install diet-libblkid.a $RPM_BUILD_ROOT%{dietlibdir}/libblkid.a
-install diet-libuuid.a $RPM_BUILD_ROOT%{dietlibdir}/libuuid.a
+cp -a diet-libblkid.a $RPM_BUILD_ROOT%{dietlibdir}/libblkid.a
+cp -a diet-libuuid.a $RPM_BUILD_ROOT%{dietlibdir}/libuuid.a
+%endif
 %endif
 
 %find_lang %{name}
+
+rm $RPM_BUILD_ROOT%{_infodir}/dir
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -764,7 +758,9 @@ fi
 %attr(755,root,root) /sbin/mkfs
 %attr(755,root,root) /sbin/mkswap
 %attr(755,root,root) /sbin/partx
+%if "%{pld_release}" != "ac"
 %attr(755,root,root) /sbin/switch_root
+%endif
 %attr(755,root,root) /sbin/wipefs
 %attr(755,root,root) %{_bindir}/cal
 %attr(755,root,root) %{_bindir}/chrt
@@ -888,9 +884,10 @@ fi
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/rtcwake.8*
 %{_mandir}/man8/setarch.8*
+%if "%{pld_release}" != "ac"
 %{_mandir}/man8/switch_root.8*
+%endif
 %{_mandir}/man8/wipefs.8*
-
 
 %lang(de) %{_mandir}/de/man1/kill.1*
 %lang(de) %{_mandir}/de/man1/more.1*
@@ -1313,7 +1310,7 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/libblkid.a
 
-%if %{with dietlibc}
+%if %{with initrd} && %{with dietlibc}
 %files -n libblkid-dietlibc
 %defattr(644,root,root,755)
 %{dietlibdir}/libblkid.a
@@ -1338,7 +1335,7 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/libuuid.a
 
-%if %{with dietlibc}
+%if %{with initrd} && %{with dietlibc}
 %files -n libuuid-dietlibc
 %defattr(644,root,root,755)
 %{dietlibdir}/libuuid.a
