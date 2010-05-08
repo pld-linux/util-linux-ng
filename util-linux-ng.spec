@@ -1,12 +1,13 @@
 #
 # Conditional build:
-%bcond_without	initrd		# don't build initrd version
 %bcond_with		uClibc		# link initrd version with static glibc instead of uClibc
 %bcond_without	dietlibc	# link initrd version with dietlibc instead of uClibc
 %bcond_without	selinux 	# SELinux support
 %if "%{pld_release}" == "ac"
+%bcond_with		initrd		# don't build initrd version
 %bcond_with		fallocate	# fallocate utility (needs glibc 2.11 to compile)
 %else
+%bcond_without	initrd		# don't build initrd version
 %bcond_without	fallocate	# fallocate utility (needs glibc 2.11 to compile)
 %endif
 
