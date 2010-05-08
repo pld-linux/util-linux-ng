@@ -684,7 +684,7 @@ cp -a diet-libuuid.a $RPM_BUILD_ROOT%{dietlibdir}/libuuid.a
 
 %find_lang %{name}
 
-rm $RPM_BUILD_ROOT%{_infodir}/dir
+rm -f $RPM_BUILD_ROOT%{_infodir}/dir
 
 %clean
 rm -rf $RPM_BUILD_ROOT
