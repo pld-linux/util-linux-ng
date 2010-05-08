@@ -1125,7 +1125,6 @@ fi
 
 %attr(755,root,root) %{_bindir}/cytune
 
-%ifarch %{ix86} %{x8664}
 %attr(755,root,root) %{_sbindir}/ramsize
 %attr(755,root,root) %{_sbindir}/rdev
 %attr(755,root,root) %{_sbindir}/rootflags
@@ -1160,7 +1159,6 @@ fi
 %lang(pl) %{_mandir}/pl/man8/rdev.8*
 %lang(pl) %{_mandir}/pl/man8/rootflags.8*
 %lang(pl) %{_mandir}/pl/man8/vidmode.8*
-%endif
 
 %{_infodir}/ipc*
 
