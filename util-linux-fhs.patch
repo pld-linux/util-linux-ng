@@ -1,0 +1,12 @@
+diff -urN util-linux-2.11d.org/include/pathnames.h util-linux-2.11d/include/pathnames.h
+--- util-linux-2.11d.org/include/pathnames.h	Sun Jun  3 21:48:00 2001
++++ util-linux-2.11d/include/pathnames.h	Sun Jun  3 21:48:47 2001
+@@ -101,7 +105,7 @@
+ #define SECURETTY       	"/etc/securetty"
+ #define _PATH_UTMP      	"/var/run/utmp"
+ #define _PATH_WTMP      	LOGDIR "/wtmp"
+-#define _PATH_WTMPLOCK		"/etc/wtmplock"
++#define _PATH_WTMPLOCK		VARPATH "/lock/wtmplock"
+ 
+ /* no more . in DEFPATH */
+ #define	_PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin"
