@@ -39,8 +39,15 @@ Source2:	login.pamd
 Source3:	util-linux-blockdev.init
 Source4:	util-linux-blockdev.sysconfig
 Patch0:		%{name}-ppc.patch
-Patch1:		%{name}-ac.patch
-Patch2:		%{name}-union-mount.patch
+Patch1:		%{name}-union-mount.patch
+Patch2:		util-linux-ctrlaltdel-man.patch
+Patch3:		util-linux-fdformat-ide.patch
+Patch4:		util-linux-fhs.patch
+Patch5:		util-linux-hotkeys.patch
+Patch6:		util-linux-info.patch
+Patch7:		util-linux-login-lastlog.patch
+Patch8:		util-linux-procpartitions.patch
+Patch9:		util-linux-swaponsymlink.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	gettext-devel
@@ -543,6 +550,13 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 %build
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_LLSEEK_PROTOTYPE"
@@ -628,7 +642,7 @@ sed -i -e 's,/usr/spool/mail,/var/mail,g' $RPM_BUILD_ROOT%{_mandir}/man1/login.1
 
 mv $RPM_BUILD_ROOT%{_sbindir}/{addpart,delpart,partx} $RPM_BUILD_ROOT/sbin
 
-cp -a  %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/login
+cp -a %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/login
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/blockdev
 cp -a %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 
