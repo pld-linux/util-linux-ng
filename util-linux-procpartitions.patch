@@ -22,12 +22,12 @@ drastic as it doesn't bail out like fsck does.
  
  	while (fgets(line, sizeof(line), procpt)) {
  		if (sscanf (line, " %d %d %d %[^\n ]",
---- util-linux-2.11y/fdisk/fdisk.c.procpartitions	2003-01-13 14:28:41.000000000 -0500
-+++ util-linux-2.11y/fdisk/fdisk.c	2003-01-13 14:28:41.000000000 -0500
-@@ -2371,12 +2371,14 @@
- 	FILE *procpt;
- 	char line[100], ptname[100], devname[120], *s;
- 	int ma, mi, sz;
+--- util-linux-ng-2.17.2/fdisk/fdisk.c.orig	2010-03-22 09:21:34.000000000 +0100
++++ util-linux-ng-2.17.2/fdisk/fdisk.c	2010-05-09 12:31:53.050933394 +0200
+@@ -2844,12 +2844,14 @@
+ 	char line[128], ptname[128], devname[256];
+ 	int ma, mi;
+ 	unsigned long long sz;
 +	char iobuf[32*1024];
  
  	procpt = fopen(PROC_PARTITIONS, "r");
@@ -38,4 +38,4 @@ drastic as it doesn't bail out like fsck does.
 +	setvbuf(procpt, iobuf, _IOFBF, sizeof(iobuf));
  
  	while (fgets(line, sizeof(line), procpt)) {
- 		if (sscanf (line, " %d %d %d %[^\n ]",
+ 		if (sscanf (line, " %d %d %llu %128[^\n ]",
