@@ -1,12 +1,17 @@
-diff -urN util-linux-2.11d.org/include/pathnames.h util-linux-2.11d/include/pathnames.h
---- util-linux-2.11d.org/include/pathnames.h	Sun Jun  3 21:48:00 2001
-+++ util-linux-2.11d/include/pathnames.h	Sun Jun  3 21:48:47 2001
-@@ -101,7 +105,7 @@
- #define SECURETTY       	"/etc/securetty"
- #define _PATH_UTMP      	"/var/run/utmp"
- #define _PATH_WTMP      	LOGDIR "/wtmp"
--#define _PATH_WTMPLOCK		"/etc/wtmplock"
-+#define _PATH_WTMPLOCK		VARPATH "/lock/wtmplock"
+--- util-linux-ng-2.17.2/include/pathnames.h.orig	2010-03-22 09:05:42.000000000 +0100
++++ util-linux-ng-2.17.2/include/pathnames.h	2010-05-09 10:46:42.934937584 +0200
+@@ -20,12 +20,12 @@
+ #define	_PATH_DEFPATH_ROOT	"/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
  
- /* no more . in DEFPATH */
- #define	_PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin"
+ #define _PATH_SECURETTY		"/etc/securetty"
+-#define _PATH_WTMPLOCK		"/etc/wtmplock"
++#define _PATH_WTMPLOCK		"/var/lock/wtmplock"
+ 
+ #define	_PATH_HUSHLOGIN		".hushlogin"
+ 
+ #ifndef _PATH_MAILDIR
+-#define	_PATH_MAILDIR		"/var/spool/mail"
++#define	_PATH_MAILDIR		"/var/mail"
+ #endif
+ #define	_PATH_MOTDFILE		"/etc/motd"
+ #define	_PATH_NOLOGIN		"/etc/nologin"
