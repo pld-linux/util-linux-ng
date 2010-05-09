@@ -663,9 +663,7 @@ rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
 	$RPM_BUILD_ROOT%{_mandir}/*/man5/nfs.5 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man8/{elvtune,setfdprm,sln,raw}.8
 
-%ifnarch %{ix86} %{x8664}
 rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{ramsize,rdev,rootflags,vidmode}.8
-%endif
 %ifarch sparc sparc64
 rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{cfdisk,sfdisk}.8
 %endif
