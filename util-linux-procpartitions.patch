@@ -1,6 +1,6 @@
 Mount has to read /proc/partitions in one gulp. It doesn't. Failed for me 
 after a hard powerdown (oops) and the resulting fsck-the-world frenzy on 
-startup, before the mount -a. Falure cause is identical (getting out of 
+startup, before the mount -a. Failure cause is identical (getting out of 
 sync with the text at the 1K boundary), but failure mode not quite so 
 drastic as it doesn't bail out like fsck does.
 

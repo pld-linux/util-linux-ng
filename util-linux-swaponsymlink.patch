@@ -1,4 +1,4 @@
-When swap is a simlink, the swap entry in
+When swap is a symlink, the swap entry in
 /etc/fstab may not match /proc/swaps. That
 means strcmp shouldn't be used for swapon.
 
