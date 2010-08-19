@@ -27,12 +27,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.17.2
+Version:	2.18
 Release:	1
 License:	GPL
 Group:		Applications/System
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/%{name}-%{version}.tar.bz2
-# Source0-md5:	4635725a3eef1c57090bac8ea5e082e6
+Source0:	http://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.18/%{name}-%{version}.tar.bz2
+# Source0-md5:	2f5f71e6af969d041d73ab778c141a77
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	3c940c7e7fe699eaa2ddb1bffb3de2fe
 Source2:	login.pamd
@@ -332,6 +332,7 @@ Summary(de.UTF-8):	Konfiguriert den Kerneltreiber für den parallelen Port
 Summary(fr.UTF-8):	Configure le pilote du port parallèle dans le noyau
 Summary(pl.UTF-8):	Program do konfigurowania sterownika portu równoległego
 Summary(tr.UTF-8):	Çekirdeğin paralel bağlantı noktası sürücüsünü ayarlar
+License:	GPL v2+
 Group:		Applications/System
 
 %description -n tunelp
@@ -382,7 +383,9 @@ agetty jest prostym linuksowym getty z obsługą portu szeregowego.
 %package -n libblkid
 Summary:	Library to handle device identification and token extraction
 Summary(pl.UTF-8):	Biblioteka do obsługi identyfikacji urządzeń
+License:	LGPL v2.1+
 Group:		Libraries
+Requires:	libuuid = %{version}-%{release}
 Obsoletes:	util-linux-ng-libs
 
 %description -n libblkid
@@ -394,9 +397,10 @@ Biblioteka do obsługi identyfikacji urządzeń i wydobywania tokenów.
 %package -n libblkid-devel
 Summary:	Header files for blkid library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki blkid
+License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	libblkid = %{version}-%{release}
-Requires:	libuuid-devel
+Requires:	libuuid-devel = %{version}-%{release}
 Obsoletes:	util-linux-ng-devel
 
 %description -n libblkid-devel
@@ -408,9 +412,10 @@ Pliki nagłówkowe biblioteki blkid.
 %package -n libblkid-static
 Summary:	Static library to handle device identification and token extraction
 Summary(pl.UTF-8):	Statyczna biblioteka do obsługi identyfikacji urządzeń
+License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	libblkid-devel = %{version}-%{release}
-Requires:	libuuid-static
+Requires:	libuuid-static = %{version}-%{release}
 Obsoletes:	util-linux-ng-static
 
 %description -n libblkid-static
@@ -423,9 +428,10 @@ tokenów.
 %package -n libblkid-dietlibc
 Summary:	Static dietlibc library to handle device identification and token extraction
 Summary(pl.UTF-8):	Statyczna biblioteka dietlibc do obsługi identyfikacji urządzeń
+License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	libblkid-devel = %{version}-%{release}
-Requires:	libuuid-dietlibc
+Requires:	libuuid-dietlibc = %{version}-%{release}
 
 %description -n libblkid-dietlibc
 Library to handle device identification and token extraction - static
@@ -520,6 +526,46 @@ Ten pakiet zawiera działającego w przestrzeni użytkownika demona
 (uuidd) gwarantującego unikalność generowania UUID-ów opartych na
 czasie nawet przy bardzo dużej częstotliwości na systemach SMP.
 
+%package -n libmount
+Summary:	Library to handle mounting-related tasks
+Summary(pl.UTF-8):	Biblioteka obsługująca zadania związane z montowaniem
+License:	LGPL
+Group:		Libraries
+Requires:	libblkid = %{version}-%{release}
+
+%description -n libmount
+Library to handle mounting-related tasks.
+
+%description -n libmount -l pl.UTF-8
+Biblioteka obsługująca zadania związane z montowaniem.
+
+%package -n libmount-devel
+Summary:	Header files for mount library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki mount
+License:	LGPL
+Group:		Development/Libraries
+Requires:	libmount = %{version}-%{release}
+Requires:	libblkid-devel = %{version}-%{release}
+
+%description -n libmount-devel
+Header files for mount library.
+
+%description -n libmount-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki mount.
+
+%package -n libmount-static
+Summary:	Static version of mount library
+Summary(pl.UTF-8):	Statyczna wersja biblioteki mount
+License:	LGPL
+Group:		Development/Libraries
+Requires:	libmount-devel = %{version}-%{release}
+
+%description -n libmount-static
+Static version of mount library.
+
+%description -n libmount-static -l pl.UTF-8
+Statyczna wersja biblioteki mount.
+
 %package -n fsck
 Summary:	Check and repair a Linux file system
 Summary(pl.UTF-8):	Sprawdzanie i naprawa linuksowego systemu plików
@@ -581,7 +627,7 @@ export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE 
 for lib in shlibs/blkid shlibs/uuid; do
 	%{__make} -C $lib \
 	%if %{with dietlibc}
-		CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
+		CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL -DUINTMAX_MAX=18446744073709551615ULL" \
 		LDFLAGS="-lcompat"
 	%endif
 done
@@ -594,7 +640,7 @@ done
 
 %{__make} -C misc-utils blkid findfs \
 %if %{with dietlibc}
-	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
+	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL -DUINTMAX_MAX=18446744073709551615ULL" \
 	LDFLAGS="-lcompat"
 
 mv -f shlibs/blkid/src/.libs/libblkid.a diet-libblkid.a
@@ -618,7 +664,6 @@ cp fsck/fsck fsck.initrd
 	--enable-login-chown-vcs \
 	--enable-login-utils \
 	--enable-partx \
-	--enable-rdev \
 	--enable-write \
 	--with-audit \
 	--with-pam \
@@ -650,7 +695,7 @@ cp -a %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/blockdev
 :> $RPM_BUILD_ROOT/var/lock/wtmpxlock
 :> $RPM_BUILD_ROOT%{_sysconfdir}/blkid.tab
 
-for lib in blkid uuid; do
+for lib in blkid uuid mount; do
 	mv $RPM_BUILD_ROOT%{_libdir}/lib${lib}.so.* $RPM_BUILD_ROOT/%{_lib}
 	ln -sf /%{_lib}/$(basename $RPM_BUILD_ROOT/%{_lib}/lib${lib}.so.*.*.*) \
 		 $RPM_BUILD_ROOT%{_libdir}/lib${lib}.so
@@ -669,16 +714,16 @@ for d in cs de es fi fr hu id it ja ko nl pl ; do
 done
 
 # cleanup, remove files not included in package
-rm $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
+%{__rm} $RPM_BUILD_ROOT%{_bindir}/{chfn,chsh,newgrp} \
 	$RPM_BUILD_ROOT%{_sbindir}/{vigr,vipw} \
 	$RPM_BUILD_ROOT%{_mandir}/man1/{chfn,chsh,newgrp}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/man8/{vigr,vipw}.8 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man1/{arch,reset}.1 \
 	$RPM_BUILD_ROOT%{_mandir}/*/man5/nfs.5 \
-	$RPM_BUILD_ROOT%{_mandir}/*/man8/{elvtune,setfdprm,sln,raw}.8
+	$RPM_BUILD_ROOT%{_mandir}/*/man8/{elvtune,setfdprm,sln,ramsize,raw,rdev,rootflags,vidmode}.8
 
 %ifarch sparc sparc64
-rm -f $RPM_BUILD_ROOT%{_mandir}/*/man8/{cfdisk,sfdisk}.8
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/*/man8/{cfdisk,sfdisk}.8
 %endif
 
 %if %{with initrd}
@@ -717,7 +762,7 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del blockdev
 fi
 
-%post -n libblkid -p /sbin/ldconfig
+%post	-n libblkid -p /sbin/ldconfig
 %postun -n libblkid -p /sbin/ldconfig
 
 %post   -n libuuid -p /sbin/ldconfig
@@ -739,6 +784,8 @@ if [ "$1" = "0" ]; then
         %groupremove uuidd
 fi
 
+%post	-n libmount -p /sbin/ldconfig
+%postun -n libmount -p /sbin/ldconfig
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
@@ -746,7 +793,6 @@ fi
 
 %attr(755,root,root) /sbin/clock
 %attr(755,root,root) /sbin/hwclock*
-
 %{_mandir}/man8/clock.8*
 %{_mandir}/man8/hwclock.8*
 %lang(es) %{_mandir}/es/man8/clock.8*
@@ -757,54 +803,13 @@ fi
 %ghost %{_sysconfdir}/blkid.tab
 %attr(755,root,root) /sbin/blkid
 %attr(755,root,root) /sbin/findfs
-
 %{_mandir}/man8/blkid.8*
 %{_mandir}/man8/findfs.8*
 
-%attr(755,root,root) /bin/dmesg
-%attr(755,root,root) /bin/kill
-%attr(755,root,root) /bin/more
-%attr(755,root,root) /sbin/addpart
-%attr(755,root,root) /sbin/ctrlaltdel
-%attr(755,root,root) /sbin/delpart
-%attr(755,root,root) /sbin/mkfs
-%attr(755,root,root) /sbin/mkswap
-%attr(755,root,root) /sbin/partx
-%if "%{pld_release}" != "ac"
-%attr(755,root,root) /sbin/switch_root
-%endif
-%attr(755,root,root) /sbin/wipefs
-%attr(755,root,root) %{_bindir}/cal
-%attr(755,root,root) %{_bindir}/chrt
-%attr(755,root,root) %{_bindir}/col
-%attr(755,root,root) %{_bindir}/colcrt
-%attr(755,root,root) %{_bindir}/colrm
-%attr(755,root,root) %{_bindir}/column
-%attr(755,root,root) %{_bindir}/ddate
-%attr(755,root,root) %{_bindir}/flock
-%{?with_fallocate:%attr(755,root,root) %{_bindir}/fallocate}
-%attr(755,root,root) %{_bindir}/getopt
-%attr(755,root,root) %{_bindir}/hexdump
-%attr(755,root,root) %{_bindir}/ionice
-%attr(755,root,root) %{_bindir}/ipcmk
-%attr(755,root,root) %{_bindir}/ipcrm
-%attr(755,root,root) %{_bindir}/ipcs
-%attr(755,root,root) %{_bindir}/isosize
-%attr(755,root,root) %{_bindir}/line
-%attr(755,root,root) %{_bindir}/logger
-%attr(755,root,root) %{_bindir}/look
-%attr(755,root,root) %{_bindir}/lscpu
-%attr(755,root,root) %{_bindir}/mcookie
-%attr(755,root,root) %{_bindir}/namei
-%attr(755,root,root) %{_bindir}/pg
-%attr(755,root,root) %{_bindir}/rename
-%attr(755,root,root) %{_bindir}/renice
-%attr(755,root,root) %{_bindir}/rev
-%attr(755,root,root) %{_bindir}/script
-%attr(755,root,root) %{_bindir}/scriptreplay
-%attr(755,root,root) %{_bindir}/setarch
 %attr(755,root,root) %{_bindir}/linux*
+%attr(755,root,root) %{_bindir}/setarch
 %{_mandir}/man8/linux*
+%{_mandir}/man8/setarch.8*
 %ifarch s390 s390x
 %attr(755,root,root) %{_bindir}/s390*
 %{_mandir}/man8/s390*
@@ -832,6 +837,50 @@ fi
 %{_mandir}/man8/ia64*
 %endif
 
+%attr(755,root,root) /bin/dmesg
+%attr(755,root,root) /bin/kill
+%attr(755,root,root) /bin/more
+%attr(755,root,root) /sbin/addpart
+%attr(755,root,root) /sbin/ctrlaltdel
+%attr(755,root,root) /sbin/delpart
+%attr(755,root,root) /sbin/fsfreeze
+%attr(755,root,root) /sbin/mkfs
+%attr(755,root,root) /sbin/mkswap
+%attr(755,root,root) /sbin/partx
+%attr(755,root,root) /sbin/swaplabel
+%if "%{pld_release}" != "ac"
+%attr(755,root,root) /sbin/switch_root
+%endif
+%attr(755,root,root) /sbin/wipefs
+%attr(755,root,root) %{_bindir}/cal
+%attr(755,root,root) %{_bindir}/chrt
+%attr(755,root,root) %{_bindir}/col
+%attr(755,root,root) %{_bindir}/colcrt
+%attr(755,root,root) %{_bindir}/colrm
+%attr(755,root,root) %{_bindir}/column
+%attr(755,root,root) %{_bindir}/cytune
+%attr(755,root,root) %{_bindir}/ddate
+%attr(755,root,root) %{_bindir}/flock
+%{?with_fallocate:%attr(755,root,root) %{_bindir}/fallocate}
+%attr(755,root,root) %{_bindir}/getopt
+%attr(755,root,root) %{_bindir}/hexdump
+%attr(755,root,root) %{_bindir}/ionice
+%attr(755,root,root) %{_bindir}/ipcmk
+%attr(755,root,root) %{_bindir}/ipcrm
+%attr(755,root,root) %{_bindir}/ipcs
+%attr(755,root,root) %{_bindir}/isosize
+%attr(755,root,root) %{_bindir}/line
+%attr(755,root,root) %{_bindir}/logger
+%attr(755,root,root) %{_bindir}/look
+%attr(755,root,root) %{_bindir}/lscpu
+%attr(755,root,root) %{_bindir}/mcookie
+%attr(755,root,root) %{_bindir}/namei
+%attr(755,root,root) %{_bindir}/pg
+%attr(755,root,root) %{_bindir}/rename
+%attr(755,root,root) %{_bindir}/renice
+%attr(755,root,root) %{_bindir}/rev
+%attr(755,root,root) %{_bindir}/script
+%attr(755,root,root) %{_bindir}/scriptreplay
 %attr(755,root,root) %{_bindir}/setsid
 %attr(755,root,root) %{_bindir}/setterm
 %attr(755,root,root) %{_bindir}/tailf
@@ -884,18 +933,18 @@ fi
 %{_mandir}/man1/unshare.1*
 %{_mandir}/man1/whereis.1*
 %{_mandir}/man1/write.1*
-
 %{_mandir}/man8/addpart.8*
 %{_mandir}/man8/ctrlaltdel.8*
 %{_mandir}/man8/cytune.8*
 %{_mandir}/man8/delpart.8*
 %{_mandir}/man8/fdformat.8*
+%{_mandir}/man8/fsfreeze.8*
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/ldattach.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/rtcwake.8*
-%{_mandir}/man8/setarch.8*
+%{_mandir}/man8/swaplabel.8*
 %if "%{pld_release}" != "ac"
 %{_mandir}/man8/switch_root.8*
 %endif
@@ -904,7 +953,6 @@ fi
 %lang(de) %{_mandir}/de/man1/kill.1*
 %lang(de) %{_mandir}/de/man1/more.1*
 %lang(de) %{_mandir}/de/man1/write.1*
-
 %lang(de) %{_mandir}/de/man8/fdformat.8*
 
 %lang(es) %{_mandir}/es/man1/colrm.1*
@@ -921,7 +969,6 @@ fi
 %lang(es) %{_mandir}/es/man1/ul.1*
 %lang(es) %{_mandir}/es/man1/whereis.1*
 %lang(es) %{_mandir}/es/man1/write.1*
-
 %lang(es) %{_mandir}/es/man8/cytune.8*
 %lang(es) %{_mandir}/es/man8/ctrlaltdel.8*
 %lang(es) %{_mandir}/es/man8/ipcrm.8*
@@ -943,7 +990,6 @@ fi
 %lang(fr) %{_mandir}/fr/man1/more.1*
 %lang(fr) %{_mandir}/fr/man1/whereis.1*
 %lang(fr) %{_mandir}/fr/man1/write.1*
-
 %lang(fr) %{_mandir}/fr/man8/ctrlaltdel.8*
 %lang(fr) %{_mandir}/fr/man8/dmesg.8*
 %lang(fr) %{_mandir}/fr/man8/fdformat.8*
@@ -960,7 +1006,6 @@ fi
 %lang(hu) %{_mandir}/hu/man1/setterm.1*
 %lang(hu) %{_mandir}/hu/man1/whereis.1*
 %lang(hu) %{_mandir}/hu/man1/write.1*
-
 %lang(hu) %{_mandir}/hu/man8/ctrlaltdel.8*
 %lang(hu) %{_mandir}/hu/man8/fdformat.8*
 %lang(hu) %{_mandir}/hu/man8/mkswap.8*
@@ -971,11 +1016,9 @@ fi
 %lang(id) %{_mandir}/id/man1/more.1*
 %lang(id) %{_mandir}/id/man1/script.1*
 %lang(id) %{_mandir}/id/man1/write.1*
-
 %lang(id) %{_mandir}/id/man8/fdformat.8*
 
 %lang(it) %{_mandir}/it/man1/kill.1*
-
 %lang(it) %{_mandir}/it/man8/mkswap.8*
 %lang(it) %{_mandir}/it/man8/setsid.8*
 
@@ -1003,7 +1046,6 @@ fi
 %lang(ja) %{_mandir}/ja/man1/ul.1*
 %lang(ja) %{_mandir}/ja/man1/whereis.1*
 %lang(ja) %{_mandir}/ja/man1/write.1*
-
 %lang(ja) %{_mandir}/ja/man8/ctrlaltdel.8*
 %lang(ja) %{_mandir}/ja/man8/cytune.8*
 %lang(ja) %{_mandir}/ja/man8/dmesg.8*
@@ -1036,7 +1078,6 @@ fi
 %lang(ko) %{_mandir}/ko/man1/ul.1*
 %lang(ko) %{_mandir}/ko/man1/whereis.1*
 %lang(ko) %{_mandir}/ko/man1/write.1*
-
 %lang(ko) %{_mandir}/ko/man8/ctrlaltdel.8*
 %lang(ko) %{_mandir}/ko/man8/dmesg.8*
 %lang(ko) %{_mandir}/ko/man8/fdformat.8*
@@ -1064,7 +1105,6 @@ fi
 %lang(pl) %{_mandir}/pl/man1/ul.1*
 %lang(pl) %{_mandir}/pl/man1/whereis.1*
 %lang(pl) %{_mandir}/pl/man1/write.1*
-
 %lang(pl) %{_mandir}/pl/man8/ctrlaltdel.8*
 %lang(pl) %{_mandir}/pl/man8/dmesg.8*
 %lang(pl) %{_mandir}/pl/man8/fdformat.8*
@@ -1135,44 +1175,7 @@ fi
 %attr(755,root,root) /sbin/mkfs.cramfs
 %attr(755,root,root) /sbin/mkfs.bfs
 
-%attr(755,root,root) %{_bindir}/cytune
-
-%attr(755,root,root) %{_sbindir}/ramsize
-%attr(755,root,root) %{_sbindir}/rdev
-%attr(755,root,root) %{_sbindir}/rootflags
-%attr(755,root,root) %{_sbindir}/vidmode
-
-%{_mandir}/man8/ramsize.8*
-%{_mandir}/man8/rdev.8*
-%{_mandir}/man8/rootflags.8*
-%{_mandir}/man8/vidmode.8*
-
-%lang(de) %{_mandir}/de/man8/ramsize.8*
-%lang(de) %{_mandir}/de/man8/rdev.8*
-%lang(de) %{_mandir}/de/man8/rootflags.8*
-%lang(de) %{_mandir}/de/man8/vidmode.8*
-
-%lang(es) %{_mandir}/es/man8/ramsize.8*
-%lang(es) %{_mandir}/es/man8/rdev.8*
-%lang(es) %{_mandir}/es/man8/rootflags.8*
-%lang(es) %{_mandir}/es/man8/vidmode.8*
-
-%lang(ja) %{_mandir}/ja/man8/ramsize.8*
-%lang(ja) %{_mandir}/ja/man8/rdev.8*
-%lang(ja) %{_mandir}/ja/man8/rootflags.8*
-%lang(ja) %{_mandir}/ja/man8/vidmode.8*
-
-%lang(ko) %{_mandir}/ko/man8/ramsize.8*
-%lang(ko) %{_mandir}/ko/man8/rdev.8*
-%lang(ko) %{_mandir}/ko/man8/rootflags.8*
-%lang(ko) %{_mandir}/ko/man8/vidmode.8*
-
-%lang(pl) %{_mandir}/pl/man8/ramsize.8*
-%lang(pl) %{_mandir}/pl/man8/rdev.8*
-%lang(pl) %{_mandir}/pl/man8/rootflags.8*
-%lang(pl) %{_mandir}/pl/man8/vidmode.8*
-
-%{_infodir}/ipc*
+%{_infodir}/ipc.info*
 
 %ghost /var/lock/wtmpxlock
 
@@ -1186,7 +1189,6 @@ fi
 
 %files -n mount
 %defattr(644,root,root,755)
-
 %attr(4755,root,root) /bin/mount
 %attr(4755,root,root) /bin/umount
 %attr(755,root,root) /sbin/pivot_root
@@ -1206,31 +1208,26 @@ fi
 %lang(de) %{_mandir}/de/man5/fstab.5*
 
 %lang(es) %{_mandir}/es/man5/fstab.5*
-
 %lang(es) %{_mandir}/es/man8/mount.8*
 %lang(es) %{_mandir}/es/man8/umount.8*
 %lang(es) %{_mandir}/es/man8/swapon.8*
 %lang(es) %{_mandir}/es/man8/swapoff.8*
 
 %lang(fr) %{_mandir}/fr/man5/fstab.5*
-
 %lang(fr) %{_mandir}/fr/man8/mount.8*
 %lang(fr) %{_mandir}/fr/man8/umount.8*
 
 %lang(hu) %{_mandir}/hu/man5/fstab.5*
-
 %lang(hu) %{_mandir}/hu/man8/mount.8*
 %lang(hu) %{_mandir}/hu/man8/umount.8*
 
 %lang(it) %{_mandir}/it/man5/fstab.5*
-
 %lang(it) %{_mandir}/it/man8/mount.8*
 %lang(it) %{_mandir}/it/man8/umount.8*
 %lang(it) %{_mandir}/it/man8/swapon.8*
 %lang(it) %{_mandir}/it/man8/swapoff.8*
 
 %lang(ja) %{_mandir}/ja/man5/fstab.5*
-
 %lang(ja) %{_mandir}/ja/man8/mount.8*
 %lang(ja) %{_mandir}/ja/man8/umount.8*
 %lang(ja) %{_mandir}/ja/man8/pivot_root.8*
@@ -1238,14 +1235,12 @@ fi
 %lang(ja) %{_mandir}/ja/man8/swapoff.8*
 
 %lang(ko) %{_mandir}/ko/man5/fstab.5*
-
 %lang(ko) %{_mandir}/ko/man8/mount.8*
 %lang(ko) %{_mandir}/ko/man8/umount.8*
 %lang(ko) %{_mandir}/ko/man8/swapon.8*
 %lang(ko) %{_mandir}/ko/man8/swapoff.8*
 
 %lang(pl) %{_mandir}/pl/man5/fstab.5*
-
 %lang(pl) %{_mandir}/pl/man8/mount.8*
 %lang(pl) %{_mandir}/pl/man8/umount.8*
 %lang(pl) %{_mandir}/pl/man8/swapon.8*
@@ -1254,7 +1249,6 @@ fi
 %files -n losetup
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/losetup
-
 %{_mandir}/man8/losetup.8*
 %lang(fr) %{_mandir}/fr/man8/losetup.8*
 %lang(it) %{_mandir}/it/man8/losetup.8*
@@ -1265,7 +1259,6 @@ fi
 %files chkdupexe
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/chkdupexe
-
 %{_mandir}/man1/chkdupexe.1*
 %lang(ja) %{_mandir}/ja/man1/chkdupexe.1*
 %lang(ko) %{_mandir}/ko/man1/chkdupexe.1*
@@ -1274,7 +1267,6 @@ fi
 %files -n tunelp
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/tunelp
-
 %{_mandir}/man8/tunelp.8*
 %lang(es) %{_mandir}/es/man8/tunelp.8*
 %lang(ja) %{_mandir}/ja/man8/tunelp.8*
@@ -1285,7 +1277,6 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/login
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/security/blacklist.login
 %attr(755,root,root) /bin/login
-
 %{_mandir}/man1/login.1*
 %lang(de) %{_mandir}/de/man1/login.1*
 %lang(es) %{_mandir}/es/man1/login.1*
@@ -1298,7 +1289,6 @@ fi
 %files -n agetty
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/agetty
-
 %{_mandir}/man8/agetty.8*
 %lang(es) %{_mandir}/es/man8/agetty.8*
 %lang(ja) %{_mandir}/ja/man8/agetty.8*
@@ -1356,6 +1346,25 @@ fi
 %attr(6755,uuidd,uuidd) %{_sbindir}/uuidd
 %attr(2775,uuidd,uuidd) /var/lib/libuuid
 %{_mandir}/man8/uuidd.8*
+
+%files -n libmount
+%defattr(644,root,root,755)
+%attr(755,root,root) /%{_lib}/libmount.so.*.*
+%attr(755,root,root) %ghost /%{_lib}/libmount.so.1
+# move to -n mount when mount starts to use libmount
+%attr(755,root,root) /bin/findmnt
+%{_mandir}/man8/findmnt.8*
+
+%files -n libmount-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libmount.so
+%{_libdir}/libmount.la
+%{_includedir}/mount
+%{_pkgconfigdir}/mount.pc
+
+%files -n libmount-static
+%defattr(644,root,root,755)
+%{_libdir}/libmount.a
 
 %files -n fsck
 %defattr(644,root,root,755)
