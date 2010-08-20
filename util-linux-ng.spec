@@ -604,6 +604,8 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 %patch8 -p1
 %patch9 -p1
 
+sed -i -e 's/-lncursesw/-lncursesw -ltinfow/' configure.ac
+
 %build
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_LLSEEK_PROTOTYPE"
 %if %{with initrd}
