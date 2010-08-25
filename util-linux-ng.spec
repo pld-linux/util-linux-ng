@@ -28,7 +28,7 @@ Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
 Version:	2.18
-Release:	3
+Release:	4
 License:	GPL
 Group:		Applications/System
 Source0:	http://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.18/%{name}-%{version}.tar.bz2
@@ -69,7 +69,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	uClibc-static >= 2:0.9.29
 	%else
 		%if %{with dietlibc}
-BuildRequires:	dietlibc-static >= 2:0.32-5
+BuildRequires:	dietlibc-static >= 2:0.32-6
 		%else
 BuildRequires:	glibc-static
 		%endif
