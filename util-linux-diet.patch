@@ -1,0 +1,61 @@
+--- util-linux-ng-2.18/shlibs/mount/src/utils.c~	2010-06-07 11:44:06.000000000 +0200
++++ util-linux-ng-2.18/shlibs/mount/src/utils.c	2010-08-26 11:10:06.142572779 +0200
+@@ -298,7 +298,11 @@
+ {
+         struct passwd pwd;
+ 	struct passwd *res;
++#ifndef __dietlibc__
+ 	size_t sz = sysconf(_SC_GETPW_R_SIZE_MAX);
++#else
++	size_t sz = 16384;
++#endif
+ 	char *buf, *username = NULL;
+ 
+ 	if (sz <= 0)
+--- util-linux-ng-2.18/shlibs/mount/src/fs.c~	2010-06-08 10:44:20.000000000 +0200
++++ util-linux-ng-2.18/shlibs/mount/src/fs.c	2010-08-26 11:12:31.326572794 +0200
+@@ -17,6 +17,9 @@
+ #include <ctype.h>
+ #include <errno.h>
+ #include <blkid.h>
++#ifdef __dietlibc__
++#include <sys/stat.h> /* for major and minor macros */
++#endif
+ 
+ #include "nls.h"
+ #include "mountP.h"
+--- util-linux-ng-2.18/shlibs/mount/src/tab_parse.c~	2010-06-07 12:35:06.000000000 +0200
++++ util-linux-ng-2.18/shlibs/mount/src/tab_parse.c	2010-08-26 11:16:35.762572782 +0200
+@@ -9,6 +9,9 @@
+ #include <stdlib.h>
+ #include <ctype.h>
+ #include <limits.h>
++#ifdef __dietlibc__
++#include <sys/stat.h> /* for makedev macro */
++#endif
+ 
+ #include "nls.h"
+ #include "mangle.h"
+--- util-linux-ng-2.18/lib/tt.c~	2010-06-07 11:44:06.000000000 +0200
++++ util-linux-ng-2.18/lib/tt.c	2010-08-26 11:32:34.886572774 +0200
+@@ -54,7 +54,7 @@
+ };
+ 
+ #else /* !HAVE_WIDECHAR */
+-# define mbs_width       strlen(_s)
++# define mbs_width(_s)	strlen(_s)
+ #endif /* !HAVE_WIDECHAR */
+ 
+ #define is_last_column(_tb, _cl) \
+--- util-linux-ng-2.18/lib/strtosize.c~	2010-06-07 11:55:53.000000000 +0200
++++ util-linux-ng-2.18/lib/strtosize.c	2010-08-26 12:17:37.199875281 +0200
+@@ -26,6 +26,9 @@
+ #include <inttypes.h>
+ #include <ctype.h>
+ #include <errno.h>
++#ifdef __dietlibc__
++#include <stdint.h>
++#endif
+ 
+ static int do_scale_by_power (uintmax_t *x, int base, int power)
+ {
