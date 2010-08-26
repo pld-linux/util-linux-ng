@@ -48,6 +48,7 @@ Patch6:		util-linux-info.patch
 Patch7:		util-linux-login-lastlog.patch
 Patch8:		util-linux-procpartitions.patch
 Patch9:		util-linux-swaponsymlink.patch
+Patch10:	util-linux-diet.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	gettext-devel
@@ -69,7 +70,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	uClibc-static >= 2:0.9.29
 	%else
 		%if %{with dietlibc}
-BuildRequires:	dietlibc-static >= 2:0.32-6
+BuildRequires:	dietlibc-static >= 2:0.32-7
 		%else
 BuildRequires:	glibc-static
 		%endif
@@ -566,6 +567,22 @@ Static version of mount library.
 %description -n libmount-static -l pl.UTF-8
 Statyczna wersja biblioteki mount.
 
+%package -n libmount-dietlibc
+Summary:	Static dietlibc mount library
+Summary(pl.UTF-8):	Statyczna biblioteka mount dla dietlibc
+License:	LGPL v2.1+
+Group:		Development/Libraries
+Requires:	libblkid-devel = %{version}-%{release}
+Requires:	libblkid-dietlibc = %{version}-%{release}
+Requires:	libuuid-devel = %{version}-%{release}
+Requires:	libuuid-dietlibc = %{version}-%{release}
+
+%description -n libmount-dietlibc
+Static dietlibc version of mount library.
+
+%description -n libmount-dietlibc -l pl.UTF-8
+Statyczna wersja biblioteki mount dla dietlibc.
+
 %package -n fsck
 Summary:	Check and repair a Linux file system
 Summary(pl.UTF-8):	Sprawdzanie i naprawa linuksowego systemu plików
@@ -603,10 +620,16 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 sed -i -e 's/-lncursesw/-lncursesw -ltinfow/' configure.ac
 
 %build
+%{__aclocal} -I m4
+%{__autoconf}
+%{__autoheader}
+%{__automake}
+
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE -DHAVE_LLSEEK_PROTOTYPE"
 %if %{with initrd}
 %{?with_uClibc:xCC="%{_target_cpu}-uclibc-gcc"}
@@ -626,32 +649,20 @@ export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE 
 	--without-pam \
 	--without-selinux
 
-for lib in shlibs/blkid shlibs/uuid; do
-	%{__make} -C $lib \
+# configure gets it unconditionally wrong
+sed -i -e 's/#define HAVE_WIDECHAR 1//' config.h
+
+sed -i -e 's/ cal\$(EXEEXT) / /' misc-utils/Makefile
+
+for dir in shlibs disk-utils misc-utils fsck fdisk schedutils hwclock; do
+	%{__make} -C $dir \
 	%if %{with dietlibc}
-		CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL -DUINTMAX_MAX=18446744073709551615ULL" \
+		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE" \
 		LDFLAGS="-lcompat"
 	%endif
+	%{__make} -C $dir install DESTDIR=`pwd`/initrd
 done
 
-%{__make} -C fsck \
-%if %{with dietlibc}
-	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL" \
-	LDFLAGS="-lcompat"
-%endif
-
-%{__make} -C misc-utils blkid findfs \
-%if %{with dietlibc}
-	CPPFLAGS="$CPPFLAGS -Dprogram_invocation_short_name=NULL -DUINTMAX_MAX=18446744073709551615ULL" \
-	LDFLAGS="-lcompat"
-
-mv -f shlibs/blkid/src/.libs/libblkid.a diet-libblkid.a
-mv -f shlibs/uuid/src/.libs/libuuid.a diet-libuuid.a
-%endif
-
-cp misc-utils/blkid blkid.initrd
-cp misc-utils/findfs findfs.initrd
-cp fsck/fsck fsck.initrd
 %{__make} clean
 %endif
 
@@ -730,14 +741,15 @@ done
 
 %if %{with initrd}
 install -d $RPM_BUILD_ROOT%{_libdir}/initrd
-install -p blkid.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/blkid
-install -p findfs.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/findfs
-install -p fsck.initrd $RPM_BUILD_ROOT%{_libdir}/initrd/fsck
+install -p initrd%{_bindir}/* $RPM_BUILD_ROOT%{_libdir}/initrd/
+install -p initrd%{_sbindir}/* $RPM_BUILD_ROOT%{_libdir}/initrd/
 ln -s fsck $RPM_BUILD_ROOT%{_libdir}/initrd/e2fsck
 
+# We don't need those
+rm $RPM_BUILD_ROOT%{_libdir}/initrd/{chkdupexe,ddate,uuidd,mcookie,whereis,mkfs*,fsck.cramfs,fsck.minix,isosize,logger}
+
 %if %{with dietlibc}
-cp -a diet-libblkid.a $RPM_BUILD_ROOT%{dietlibdir}/libblkid.a
-cp -a diet-libuuid.a $RPM_BUILD_ROOT%{dietlibdir}/libuuid.a
+cp -a initrd%{_libdir}/lib*.a $RPM_BUILD_ROOT%{dietlibdir}
 %endif
 %endif
 
@@ -1368,6 +1380,12 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/libmount.a
 
+%if %{with initrd} && %{with dietlibc}
+%files -n libmount-dietlibc
+%defattr(644,root,root,755)
+%{dietlibdir}/libmount.a
+%endif
+
 %files -n fsck
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/fsck
@@ -1376,8 +1394,5 @@ fi
 %if %{with initrd}
 %files initrd
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/initrd/blkid
-%attr(755,root,root) %{_libdir}/initrd/findfs
-%attr(755,root,root) %{_libdir}/initrd/fsck
-%attr(755,root,root) %{_libdir}/initrd/e2fsck
+%attr(755,root,root) %{_libdir}/initrd/*
 %endif
