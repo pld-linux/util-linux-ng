@@ -51,6 +51,7 @@ Patch9:		util-linux-swaponsymlink.patch
 Patch10:	util-linux-diet.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
+BuildRequires:	automake >= 1:1.10
 BuildRequires:	gettext-devel
 %{?with_fallocate:BuildRequires:	glibc-devel >= 6:2.11}
 %{?with_selinux:BuildRequires:	libselinux-devel}
@@ -545,8 +546,8 @@ Summary:	Header files for mount library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki mount
 License:	LGPL
 Group:		Development/Libraries
-Requires:	libmount = %{version}-%{release}
 Requires:	libblkid-devel = %{version}-%{release}
+Requires:	libmount = %{version}-%{release}
 
 %description -n libmount-devel
 Header files for mount library.
