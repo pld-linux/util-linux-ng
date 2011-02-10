@@ -106,7 +106,7 @@
  	if (rc <= 0)
  		return -errno;
  
-+#ifdef __dietlibc__
++#ifndef HAVE_MKOSTEMP
 +	if ( mktemp( n ) == NULL ) {
 +		free(n);
 +		return -errno;
@@ -147,3 +147,33 @@
  	if (inst->lock >= 0) {
  		int rc = -1;
  
+--- util-linux-2.19/configure.ac~	2011-02-10 21:28:23.395401725 +0100
++++ util-linux-2.19/configure.ac	2011-02-10 22:12:29.997898392 +0100
+@@ -188,6 +188,7 @@
+ 	lchown \
+ 	llseek \
+ 	lseek64 \
++	mkostemp \
+ 	strtoull \
+ 	sysconf \
+ 	getdtablesize \
+--- util-linux-2.19/misc-utils/findfs.c~	2011-01-31 16:43:47.000000000 +0100
++++ util-linux-2.19/misc-utils/findfs.c	2011-02-10 22:24:39.615735924 +0100
+@@ -12,6 +12,7 @@
+ 
+ #include <blkid.h>
+ 
++#include "c.h"
+ #include "nls.h"
+ 
+ static void __attribute__((__noreturn__)) usage(int rc)
+--- util-linux-2.19/misc-utils/scriptreplay.c~	2011-01-31 16:43:47.000000000 +0100
++++ util-linux-2.19/misc-utils/scriptreplay.c	2011-02-10 22:26:22.019069258 +0100
+@@ -28,6 +28,7 @@
+ #include <unistd.h>
+ #include <err.h>
+ 
++#include "c.h"
+ #include "nls.h"
+ 
+ #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
