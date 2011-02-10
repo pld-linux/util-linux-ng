@@ -31,7 +31,7 @@ Version:	2.19
 Release:	0.1
 License:	GPL
 Group:		Applications/System
-Source0:	http://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.19/util-linux-%{version}.tar.bz2
+Source0:	http://ftp.kernel.org/pub/linux/utils/util-linux/v2.19/util-linux-%{version}.tar.bz2
 # Source0-md5:	590ca71aad0b254e2631d84401f28255
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	3c940c7e7fe699eaa2ddb1bffb3de2fe
@@ -48,7 +48,7 @@ Patch7:		util-linux-login-lastlog.patch
 Patch8:		util-linux-procpartitions.patch
 Patch9:		util-linux-swaponsymlink.patch
 Patch10:	util-linux-diet.patch
-URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
+URL:		http://userweb.kernel.org/~kzak/util-linux/
 BuildRequires:	audit-libs-devel >= 1.0.6
 BuildRequires:	autoconf
 BuildRequires:	automake >= 1:1.10
@@ -848,11 +848,13 @@ fi
 
 %attr(755,root,root) /bin/dmesg
 %attr(755,root,root) /bin/kill
+%attr(755,root,root) /bin/lsblk
 %attr(755,root,root) /bin/more
 %attr(755,root,root) /sbin/addpart
 %attr(755,root,root) /sbin/ctrlaltdel
 %attr(755,root,root) /sbin/delpart
 %attr(755,root,root) /sbin/fsfreeze
+%attr(755,root,root) /sbin/fstrim
 %attr(755,root,root) /sbin/mkfs
 %attr(755,root,root) /sbin/mkswap
 %attr(755,root,root) /sbin/partx
@@ -948,8 +950,10 @@ fi
 %{_mandir}/man8/delpart.8*
 %{_mandir}/man8/fdformat.8*
 %{_mandir}/man8/fsfreeze.8*
+%{_mandir}/man8/fstrim.8*
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/ldattach.8*
+%{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/rtcwake.8*
@@ -1121,6 +1125,8 @@ fi
 %lang(pl) %{_mandir}/pl/man8/ipcs.8*
 %lang(pl) %{_mandir}/pl/man8/mkswap.8*
 %lang(pl) %{_mandir}/pl/man8/renice.8*
+
+%lang(ru) %{_mandir}/ru/man1/ddate.1*
 
 %attr(755,root,root) /sbin/fdisk
 %attr(755,root,root) /sbin/fsck.minix
