@@ -45,3 +45,105 @@
  
  static int do_scale_by_power (uintmax_t *x, int base, int power)
  {
+--- util-linux-2.19/shlibs/mount/src/utils.c~	2011-01-24 23:46:29.000000000 +0100
++++ util-linux-2.19/shlibs/mount/src/utils.c	2011-02-10 20:12:00.499611392 +0100
+@@ -398,7 +398,11 @@
+ 	int rc = -1;
+         struct passwd pwd;
+ 	struct passwd *pw;
++#ifdef _SC_GETPW_R_SIZE_MAX
+ 	size_t sz = sysconf(_SC_GETPW_R_SIZE_MAX);
++#else
++	size_t sz = 0;
++#endif
+ 	char *buf;
+ 
+ 	if (!username || !uid)
+@@ -427,7 +431,11 @@
+ 	int rc = -1;
+         struct group grp;
+ 	struct group *gr;
++#ifdef _SC_GETGR_R_SIZE_MAX
+ 	size_t sz = sysconf(_SC_GETGR_R_SIZE_MAX);
++#else
++	size_t sz = 0;
++#endif
+ 	char *buf;
+ 
+ 	if (!groupname || !gid)
+--- util-linux-2.19/shlibs/mount/src/tab_update.c~	2011-02-09 14:23:48.000000000 +0100
++++ util-linux-2.19/shlibs/mount/src/tab_update.c	2011-02-10 20:26:15.846797059 +0100
+@@ -610,8 +610,14 @@
+ 
+ 	DBG(UPDATE, mnt_debug("%s: locking", lfile));
+ 
+-	fd = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC, S_IWUSR|
+-			                             S_IRUSR|S_IRGRP|S_IROTH);
++	fd = open(lfile,
++#ifdef O_CLOEXEC
++		O_RDONLY|O_CREAT|O_CLOEXEC,
++#else
++		O_RDONLY|O_CREAT,
++#endif
++		S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
++
+ 	free(lfile);
+ 
+ 	if (fd < 0)
+--- util-linux-2.19/lib/at.c~	2011-01-31 16:43:47.000000000 +0100
++++ util-linux-2.19/lib/at.c	2011-02-10 20:30:37.336797058 +0100
+@@ -7,6 +7,7 @@
+ #include <stdlib.h>
+ #include <fcntl.h>
+ #include <sys/stat.h>
++#include <limits.h>
+ 
+ #include "at.h"
+ 
+--- util-linux-2.19/shlibs/mount/src/utils.c~	2011-02-10 20:32:07.906797058 +0100
++++ util-linux-2.19/shlibs/mount/src/utils.c	2011-02-10 20:49:24.336797058 +0100
+@@ -664,7 +664,15 @@
+ 	if (rc <= 0)
+ 		return -errno;
+ 
++#ifdef __dietlibc__
++	if ( mktemp( n ) == NULL ) {
++		free(n);
++		return -errno;
++	}
++	fd = open(n, flags | O_EXCL);
++#else
+ 	fd = mkostemp(n, flags | O_EXCL);
++#endif
+ 	if (fd >= 0 && name)
+ 		*name = n;
+ 	else
+--- util-linux-2.19/misc-utils/findmnt.c~	2011-01-31 16:43:47.000000000 +0100
++++ util-linux-2.19/misc-utils/findmnt.c	2011-02-10 20:54:23.100130391 +0100
+@@ -30,6 +30,9 @@
+ #include <sys/ioctl.h>
+ #endif
+ #include <assert.h>
++#ifdef __dietlibc__
++#include <sys/stat.h> /* for major and minor macros */
++#endif
+ 
+ #define USE_UNSTABLE_LIBMOUNT_API
+ #include <libmount.h>
+--- util-linux-2.19/fsck/fsck.c~	2011-02-07 16:19:29.000000000 +0100
++++ util-linux-2.19/fsck/fsck.c	2011-02-10 21:09:27.024658725 +0100
+@@ -270,7 +270,13 @@
+ 	if (verbose)
+ 		printf(_("Locking disk %s ... "), diskname);
+ 
+-	inst->lock = open(diskname, O_CLOEXEC | O_RDONLY);
++	inst->lock = open(diskname,
++#ifdef O_CLOEXEC
++			O_CLOEXEC | O_RDONLY
++#else
++			O_RDONLY
++#endif
++			);
+ 	if (inst->lock >= 0) {
+ 		int rc = -1;
+ 

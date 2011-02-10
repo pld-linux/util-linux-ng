@@ -657,12 +657,15 @@ export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE 
 # configure gets it unconditionally wrong
 sed -i -e 's/#define HAVE_WIDECHAR 1//' config.h
 
-sed -i -e 's/ cal\$(EXEEXT) / /' misc-utils/Makefile
+sed -i -e 's/ cal\$(EXEEXT) / /; s/ lsblk\$(EXEEXT)//' misc-utils/Makefile
 
 for dir in shlibs/* disk-utils misc-utils fsck fdisk schedutils hwclock; do
 	%{__make} -C $dir \
+	%if %{with uClibc}
+		CPPFLAGS="$CPPFLAGS -Dversionsort=alphasort" \
+	%endif
 	%if %{with dietlibc}
-		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE" \
+		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -Dversionsort=alphasort" \
 		LDFLAGS="-lcompat"
 	%endif
 	# empty line required because there is a backslash up there
@@ -749,7 +752,7 @@ install -p initrd%{_sbindir}/* $RPM_BUILD_ROOT%{_libdir}/initrd/
 ln -s fsck $RPM_BUILD_ROOT%{_libdir}/initrd/e2fsck
 
 # We don't need those
-rm $RPM_BUILD_ROOT%{_libdir}/initrd/{chkdupexe,ddate,uuidd,mcookie,whereis,mkfs*,fsck.cramfs,fsck.minix,isosize,logger}
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/initrd/{chkdupexe,ddate,uuidd,mcookie,whereis,mkfs*,fsck.minix,isosize,logger}
 
 %if %{with dietlibc}
 cp -a initrd%{_libdir}/lib*.a $RPM_BUILD_ROOT%{dietlibdir}
