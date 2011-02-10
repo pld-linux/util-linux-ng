@@ -27,12 +27,12 @@ Summary(ru.UTF-8):	Набор базовых системных утилит д�
 Summary(tr.UTF-8):	Temel sistem araçları
 Summary(uk.UTF-8):	Набір базових системних утиліт для Linux
 Name:		util-linux-ng
-Version:	2.18
-Release:	5
+Version:	2.19
+Release:	0.1
 License:	GPL
 Group:		Applications/System
-Source0:	http://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.18/%{name}-%{version}.tar.bz2
-# Source0-md5:	2f5f71e6af969d041d73ab778c141a77
+Source0:	http://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.19/util-linux-%{version}.tar.bz2
+# Source0-md5:	590ca71aad0b254e2631d84401f28255
 Source1:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/util-linux-non-english-man-pages.tar.bz2
 # Source1-md5:	3c940c7e7fe699eaa2ddb1bffb3de2fe
 Source2:	login.pamd
@@ -44,7 +44,6 @@ Patch2:		util-linux-ctrlaltdel-man.patch
 Patch3:		util-linux-fdformat-ide.patch
 Patch4:		util-linux-fhs.patch
 Patch5:		util-linux-hotkeys.patch
-Patch6:		util-linux-info.patch
 Patch7:		util-linux-login-lastlog.patch
 Patch8:		util-linux-procpartitions.patch
 Patch9:		util-linux-swaponsymlink.patch
@@ -610,14 +609,13 @@ Pakiet ten zawiera narzędzie blkid do rozpoznawania partycji przez
 etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 
 %prep
-%setup -q -a1
+%setup -q -a1 -n util-linux-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1

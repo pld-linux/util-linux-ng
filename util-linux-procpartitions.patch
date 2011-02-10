@@ -30,9 +30,9 @@ drastic as it doesn't bail out like fsck does.
  	unsigned long long sz;
 +	char iobuf[32*1024];
  
- 	procpt = fopen(PROC_PARTITIONS, "r");
+ 	procpt = fopen(_PATH_PROC_PARTITIONS, "r");
  	if (procpt == NULL) {
- 		fprintf(stderr, _("cannot open %s\n"), PROC_PARTITIONS);
+ 		fprintf(stderr, _("cannot open %s\n"), _PATH_PROC_PARTITIONS);
  		return;
  	}
 +	setvbuf(procpt, iobuf, _IOFBF, sizeof(iobuf));

@@ -11,17 +11,6 @@
  
  #: login-utils/wall.c:104
  #, c-format
---- util-linux-ng-2.17.2/po/da.po.orig	2010-05-09 12:43:26.534940098 +0200
-+++ util-linux-ng-2.17.2/po/da.po	2010-05-09 12:43:32.174935908 +0200
-@@ -7705,7 +7705,7 @@
- #: login-utils/vipw.c:352
- #, c-format
- msgid "Would you like to edit %s now [y/n]? "
--msgstr "Vil du redigere %s nu [j/n]? "
-+msgstr "Vil du redigere %s nu [y/n]? "
- 
- #: login-utils/wall.c:112
- #, c-format
 --- util-linux-ng-2.17.2/po/de.po.orig	2010-05-09 12:46:21.882940098 +0200
 +++ util-linux-ng-2.17.2/po/de.po	2010-05-09 12:46:26.774938422 +0200
 @@ -7945,7 +7945,7 @@
