@@ -663,6 +663,7 @@ for dir in shlibs/* disk-utils misc-utils fsck fdisk schedutils hwclock; do
 	%{__make} -C $dir \
 	%if %{with uClibc}
 		CPPFLAGS="$CPPFLAGS -Dversionsort=alphasort" \
+		LDFLAGS="-Wl,-static"
 	%endif
 	%if %{with dietlibc}
 		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -Dversionsort=alphasort" \
