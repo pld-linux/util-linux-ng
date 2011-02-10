@@ -662,11 +662,10 @@ sed -i -e 's/ cal\$(EXEEXT) / /; s/ lsblk\$(EXEEXT)//' misc-utils/Makefile
 for dir in shlibs/* disk-utils misc-utils fsck fdisk schedutils hwclock; do
 	%{__make} -C $dir \
 	%if %{with uClibc}
-		CPPFLAGS="$CPPFLAGS -Dversionsort=alphasort" \
 		LDFLAGS="-Wl,-static"
 	%endif
 	%if %{with dietlibc}
-		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -Dversionsort=alphasort" \
+		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE" \
 		LDFLAGS="-lcompat"
 	%endif
 	# empty line required because there is a backslash up there
