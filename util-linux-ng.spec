@@ -50,9 +50,11 @@ Patch9:		util-linux-swaponsymlink.patch
 Patch10:	util-linux-diet.patch
 URL:		http://userweb.kernel.org/~kzak/util-linux-ng/
 BuildRequires:	audit-libs-devel >= 1.0.6
+BuildRequires:	autoconf
 BuildRequires:	automake >= 1:1.10
 BuildRequires:	gettext-devel
 %{?with_fallocate:BuildRequires:	glibc-devel >= 6:2.11}
+BuildRequires:	gtk-doc-automake
 %{?with_selinux:BuildRequires:	libselinux-devel}
 %{?with_selinux:BuildRequires:	libsepol-devel}
 BuildRequires:	libtool
@@ -63,7 +65,6 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpm >= 4.4.9-56
 BuildRequires:	rpmbuild(macros) >= 1.470
 BuildRequires:	sed >= 4.0
-BuildRequires:	texinfo
 BuildRequires:	zlib-devel
 %if %{with initrd}
 	%if %{with uClibc}
@@ -624,6 +625,8 @@ etykietę lub UUID - statycznie skonsolidowane na potrzeby initrd.
 sed -i -e 's/-lncursesw/-lncursesw -ltinfow/' configure.ac
 
 %build
+%{__gettextize}
+%{__libtoolize}
 %{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
@@ -634,6 +637,9 @@ export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses -DHAVE_LSEEK64_PROTOTYPE 
 %{?with_uClibc:xCC="%{_target_cpu}-uclibc-gcc"}
 %{?with_dietlibc:xCC="diet %{__cc}"; xCC=${xCC#*ccache }}
 %configure \
+%if %{with dietlibc}
+	ac_cv_header_crypt_h="no" \
+%endif
 	CC="$xCC" \
 	--disable-shared \
 	--enable-static \
@@ -653,12 +659,13 @@ sed -i -e 's/#define HAVE_WIDECHAR 1//' config.h
 
 sed -i -e 's/ cal\$(EXEEXT) / /' misc-utils/Makefile
 
-for dir in shlibs disk-utils misc-utils fsck fdisk schedutils hwclock; do
+for dir in shlibs/* disk-utils misc-utils fsck fdisk schedutils hwclock; do
 	%{__make} -C $dir \
 	%if %{with dietlibc}
 		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE" \
 		LDFLAGS="-lcompat"
 	%endif
+	# empty line required because there is a backslash up there
 	%{__make} -C $dir install DESTDIR=`pwd`/initrd
 done
 
@@ -682,9 +689,6 @@ done
 	--with%{!?with_selinux:out}-selinux
 
 %{__make}
-
-cd sys-utils
-makeinfo ipc.texi
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -752,18 +756,10 @@ cp -a initrd%{_libdir}/lib*.a $RPM_BUILD_ROOT%{dietlibdir}
 %endif
 %endif
 
-%find_lang %{name}
-
-rm -f $RPM_BUILD_ROOT%{_infodir}/dir
+%find_lang util-linux
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post -p /sbin/postshell
--/usr/sbin/fix-info-dir -c %{_infodir}
-
-%postun -p /sbin/postshell
--/usr/sbin/fix-info-dir -c %{_infodir}
 
 %post -n blockdev
 /sbin/chkconfig --add blockdev
@@ -800,7 +796,7 @@ fi
 %post	-n libmount -p /sbin/ldconfig
 %postun -n libmount -p /sbin/ldconfig
 
-%files -f %{name}.lang
+%files -f util-linux.lang
 %defattr(644,root,root,755)
 %doc */README.* text-utils/LICENSE.pg NEWS
 
@@ -1188,8 +1184,6 @@ fi
 %attr(755,root,root) /sbin/mkfs.cramfs
 %attr(755,root,root) /sbin/mkfs.bfs
 
-%{_infodir}/ipc.info*
-
 %ghost /var/lock/wtmpxlock
 
 %files -n blockdev
@@ -1372,7 +1366,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libmount.so
 %{_libdir}/libmount.la
-%{_includedir}/mount
+%{_includedir}/libmount
 %{_pkgconfigdir}/mount.pc
 
 %files -n libmount-static
